@@ -15,8 +15,8 @@ import os
 from datetime import datetime
 from typing import Dict, Any, Optional
 
-# Get backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://3ea02304-cf1c-419a-b163-076b622707e4.preview.emergentagent.com')
+# Get backend URL from environment - use localhost for testing
+BACKEND_URL = "http://localhost:8001"
 API_BASE_URL = f"{BACKEND_URL}/api"
 
 class GalacticQuestTester:
