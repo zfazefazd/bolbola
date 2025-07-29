@@ -235,7 +235,16 @@ frontend_build_path = Path(__file__).parent.parent / "frontend" / "build"
 if frontend_build_path.exists():
     app.mount("/static", StaticFiles(directory=str(frontend_build_path / "static")), name="static")
     
-    # Serve React app for all non-API routes
+    # Serve React app for root route
+    @app.get("/")
+    async def serve_react_root():
+        index_file = frontend_build_path / "index.html"
+        if index_file.exists():
+            return FileResponse(str(index_file))
+        else:
+            raise HTTPException(status_code=404, detail="Frontend not built")
+    
+    # Serve React app for all other non-API routes
     @app.get("/{full_path:path}")
     async def serve_react_app(full_path: str):
         if full_path.startswith("api/"):
