@@ -429,6 +429,12 @@ class GalacticQuestTester:
             self.log_result("XP Calculation", False, "No time logs available to verify XP", {})
             return False
         
+        # Get fresh skill data from API to ensure we have current difficulty levels
+        success, current_skills = await self.make_request('GET', '/skills')
+        if not success:
+            self.log_result("XP Calculation", False, "Failed to fetch current skills for verification", current_skills)
+            return False
+        
         # Verify XP calculation logic
         expected_multipliers = {
             'trivial': 1.0,
@@ -441,9 +447,9 @@ class GalacticQuestTester:
         
         all_correct = True
         for log in self.logged_times:
-            # Get the skill to check its difficulty
+            # Get the skill to check its CURRENT difficulty (not cached)
             skill_id = log['skill_id']
-            skill = next((s for s in self.created_skills if s['id'] == skill_id), None)
+            skill = next((s for s in current_skills if s['id'] == skill_id), None)
             
             if skill:
                 expected_xp = int(log['minutes'] * expected_multipliers.get(skill['difficulty'], 1.0))
