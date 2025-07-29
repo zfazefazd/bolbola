@@ -2,8 +2,8 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 import uuid
-from .models import *
-from .auth import AuthService
+from models import *
+from auth import AuthService
 
 class SkillService:
     def __init__(self, db: AsyncIOMotorDatabase):
