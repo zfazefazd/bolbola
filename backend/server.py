@@ -37,14 +37,19 @@ app.add_middleware(
 # Database events
 @app.on_event("startup")
 async def startup_db_client():
-    await connect_to_mongo()
-    
-    # Initialize default data
-    from init_data import initialize_default_data
-    db = await get_database()
-    await initialize_default_data(db)
-    
-    logging.info("Connected to MongoDB and initialized default data")
+    try:
+        await connect_to_mongo()
+        
+        # Initialize default data
+        from init_data import initialize_default_data
+        db = await get_database()
+        await initialize_default_data(db)
+        
+        logging.info("Connected to MongoDB and initialized default data")
+    except Exception as e:
+        logging.error(f"Failed to start application: {e}")
+        # Re-raise the exception to prevent the app from starting with a broken database
+        raise e
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
