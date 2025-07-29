@@ -38,7 +38,7 @@ async def startup_db_client():
     await connect_to_mongo()
     
     # Initialize default data
-    from .init_data import initialize_default_data
+    from init_data import initialize_default_data
     db = await get_database()
     await initialize_default_data(db)
     
