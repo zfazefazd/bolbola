@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: galactic-quest-preview
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  tls:
+    - hosts:
+        - 8835d3c4-3d0f-4def-b034-8327f287d670.preview.emergentagent.com
+      secretName: preview-tls-secret
+  rules:
+    - host: 8835d3c4-3d0f-4def-b034-8327f287d670.preview.emergentagent.com
+      http:
+        paths:
+          # route all /api calls to your backend
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: galactic-backend-svc
+                port:
+                  number: 8001
+
+          # everything else goes to your React frontend
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: galactic-frontend-svc
+                port:
+                  number: 3000
