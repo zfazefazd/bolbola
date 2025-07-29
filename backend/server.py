@@ -230,6 +230,11 @@ async def health_check():
 # Include the router in the main app
 app.include_router(api_router)
 
+# Add health check at root level for Render
+@app.get("/health-check")
+async def health_check_root():
+    return {"status": "healthy", "service": "galactic-quest", "timestamp": datetime.utcnow()}
+
 # Mount static files for React app
 frontend_build_path = Path(__file__).parent.parent / "frontend" / "build"
 if frontend_build_path.exists():
