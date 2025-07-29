@@ -230,6 +230,24 @@ async def health_check():
 # Include the router in the main app
 app.include_router(api_router)
 
+# Mount static files for React app
+frontend_build_path = Path(__file__).parent.parent / "frontend" / "build"
+if frontend_build_path.exists():
+    app.mount("/static", StaticFiles(directory=str(frontend_build_path / "static")), name="static")
+    
+    # Serve React app for all non-API routes
+    @app.get("/{full_path:path}")
+    async def serve_react_app(full_path: str):
+        if full_path.startswith("api/"):
+            raise HTTPException(status_code=404, detail="API endpoint not found")
+        
+        # For React Router, serve index.html for all non-static routes
+        index_file = frontend_build_path / "index.html"
+        if index_file.exists():
+            return FileResponse(str(index_file))
+        else:
+            raise HTTPException(status_code=404, detail="Frontend not built")
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
