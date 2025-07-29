@@ -5,7 +5,7 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 import os
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from .database import get_database
+from database import get_database
 
 # Security configuration
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-this-in-production")
