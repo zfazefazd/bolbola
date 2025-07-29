@@ -9,10 +9,10 @@ from datetime import datetime
 from typing import List, Optional
 
 # Import our new modules
-from .database import connect_to_mongo, close_mongo_connection, get_database
-from .auth import AuthService, get_current_user
-from .services import SkillService, CategoryService, TimeLogService, LeaderboardService, AchievementService
-from .models import *
+from database import connect_to_mongo, close_mongo_connection, get_database
+from auth import AuthService, get_current_user
+from services import SkillService, CategoryService, TimeLogService, LeaderboardService, AchievementService
+from models import *
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
