@@ -85,6 +85,7 @@ class CategoryService:
             "color": category_data.color,
             "description": category_data.description,
             "user_id": user_id,
+            "is_predefined": False,
             "created_at": now
         }
         
@@ -97,6 +98,14 @@ class CategoryService:
         categories = []
         async for category_doc in cursor:
             categories.append(Category(**category_doc, id=category_doc["_id"]))
+        return categories
+    
+    async def get_predefined_categories(self) -> List[PredefinedCategory]:
+        """Get all predefined categories."""
+        cursor = self.db.predefined_categories.find({}).sort("created_at", 1)
+        categories = []
+        async for category_doc in cursor:
+            categories.append(PredefinedCategory(**category_doc, id=category_doc["_id"]))
         return categories
     
     async def delete_category(self, user_id: str, category_id: str) -> bool:
@@ -182,6 +191,10 @@ class TimeLogService:
         # Update user total XP and rank
         await self.update_user_stats(user_id, xp_earned, time_log_data.minutes)
         
+        # Update quest progress
+        quest_service = QuestService(self.db)
+        await quest_service.update_quest_progress(user_id, time_log_data.skill_id, time_log_data.minutes)
+        
         return TimeLog(**time_log_doc, id=time_log_id)
     
     async def update_user_stats(self, user_id: str, xp_earned: int, minutes_logged: int):
@@ -229,8 +242,8 @@ class LeaderboardService:
         self.db = db
     
     async def get_leaderboard(self, user_id: str, limit: int = 50) -> LeaderboardResponse:
-        """Get the global leaderboard."""
-        # Get top users by XP
+        """Get the global leaderboard with proper rank positions."""
+        # Get top users by XP with proper ranking
         cursor = self.db.users.find({}).sort("total_xp", -1).limit(limit)
         entries = []
         user_position = None
@@ -254,7 +267,8 @@ class LeaderboardService:
         
         # If user not in top entries, find their position
         if user_position is None:
-            user_position = await self.db.users.count_documents({"total_xp": {"$gt": await self.get_user_xp(user_id)}}) + 1
+            user_xp = await self.get_user_xp(user_id)
+            user_position = await self.db.users.count_documents({"total_xp": {"$gt": user_xp}}) + 1
         
         total_players = await self.db.users.count_documents({})
         
@@ -316,5 +330,216 @@ class AchievementService:
         # This would contain logic to check various achievement criteria
         # and award new achievements. For now, it's a placeholder.
         pass
+
+class QuestService:
+    def __init__(self, db: AsyncIOMotorDatabase):
+        self.db = db
+    
+    async def get_user_quests(self, user_id: str) -> Dict[str, List[UserQuest]]:
+        """Get user's active daily and weekly quests."""
+        today = datetime.utcnow().date()
+        
+        # Get current daily quests
+        daily_quests_cursor = self.db.user_quests.find({
+            "user_id": user_id,
+            "quest_type": "daily",
+            "start_date": {"$gte": datetime.combine(today, datetime.min.time())},
+            "end_date": {"$lte": datetime.combine(today, datetime.max.time())}
+        })
+        
+        daily_quests = []
+        async for quest_doc in daily_quests_cursor:
+            daily_quests.append(UserQuest(**quest_doc, id=quest_doc["_id"]))
+        
+        # Get current weekly quests
+        weekday = today.weekday()
+        week_start = today - timedelta(days=weekday)
+        week_end = week_start + timedelta(days=6)
+        
+        weekly_quests_cursor = self.db.user_quests.find({
+            "user_id": user_id,
+            "quest_type": "weekly",
+            "start_date": {"$gte": datetime.combine(week_start, datetime.min.time())},
+            "end_date": {"$lte": datetime.combine(week_end, datetime.max.time())}
+        })
+        
+        weekly_quests = []
+        async for quest_doc in weekly_quests_cursor:
+            weekly_quests.append(UserQuest(**quest_doc, id=quest_doc["_id"]))
+        
+        return {
+            "daily": daily_quests,
+            "weekly": weekly_quests
+        }
+    
+    async def update_quest_progress(self, user_id: str, skill_id: str, minutes_logged: int):
+        """Update quest progress based on activity."""
+        today = datetime.utcnow().date()
+        
+        # Update daily quests
+        daily_quests = await self.db.user_quests.find({
+            "user_id": user_id,
+            "quest_type": "daily",
+            "start_date": {"$gte": datetime.combine(today, datetime.min.time())},
+            "completed": False
+        }).to_list(None)
+        
+        for quest in daily_quests:
+            progress_updated = False
+            
+            # Update based on quest type
+            if quest["quest_id"] == "daily-grind":
+                # Count unique skills logged today
+                skills_today = await self.db.time_logs.distinct("skill_id", {
+                    "user_id": user_id,
+                    "logged_at": {"$gte": datetime.combine(today, datetime.min.time())}
+                })
+                new_progress = len(skills_today)
+                if new_progress != quest["progress"]:
+                    progress_updated = True
+                    quest["progress"] = new_progress
+            
+            elif quest["quest_id"] == "time-investor":
+                # Count total minutes logged today
+                total_minutes_today = await self.db.time_logs.aggregate([
+                    {
+                        "$match": {
+                            "user_id": user_id,
+                            "logged_at": {"$gte": datetime.combine(today, datetime.min.time())}
+                        }
+                    },
+                    {"$group": {"_id": None, "total": {"$sum": "$minutes"}}}
+                ]).to_list(None)
+                
+                new_progress = total_minutes_today[0]["total"] if total_minutes_today else 0
+                if new_progress != quest["progress"]:
+                    progress_updated = True
+                    quest["progress"] = new_progress
+            
+            # Update quest if progress changed
+            if progress_updated:
+                completed = quest["progress"] >= quest["target_value"]
+                await self.db.user_quests.update_one(
+                    {"_id": quest["_id"]},
+                    {
+                        "$set": {
+                            "progress": quest["progress"],
+                            "completed": completed,
+                            "updated_at": datetime.utcnow()
+                        }
+                    }
+                )
+        
+        # Update weekly quests
+        weekday = today.weekday()
+        week_start = today - timedelta(days=weekday)
+        
+        weekly_quests = await self.db.user_quests.find({
+            "user_id": user_id,
+            "quest_type": "weekly",
+            "start_date": {"$gte": datetime.combine(week_start, datetime.min.time())},
+            "completed": False
+        }).to_list(None)
+        
+        for quest in weekly_quests:
+            if quest["quest_id"] == "consistency-master":
+                # Count days with activity this week
+                days_with_activity = await self.db.time_logs.aggregate([
+                    {
+                        "$match": {
+                            "user_id": user_id,
+                            "logged_at": {"$gte": datetime.combine(week_start, datetime.min.time())}
+                        }
+                    },
+                    {
+                        "$group": {
+                            "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$logged_at"}}
+                        }
+                    },
+                    {"$count": "days"}
+                ]).to_list(None)
+                
+                new_progress = days_with_activity[0]["days"] if days_with_activity else 0
+                if new_progress != quest["progress"]:
+                    completed = new_progress >= quest["target_value"]
+                    await self.db.user_quests.update_one(
+                        {"_id": quest["_id"]},
+                        {
+                            "$set": {
+                                "progress": new_progress,
+                                "completed": completed,
+                                "updated_at": datetime.utcnow()
+                            }
+                        }
+                    )
+    
+    async def claim_quest_reward(self, user_id: str, quest_id: str) -> bool:
+        """Claim quest reward and award XP."""
+        quest = await self.db.user_quests.find_one({
+            "_id": quest_id,
+            "user_id": user_id,
+            "completed": True,
+            "claimed": False
+        })
+        
+        if not quest:
+            return False
+        
+        # Mark quest as claimed
+        await self.db.user_quests.update_one(
+            {"_id": quest_id},
+            {
+                "$set": {
+                    "claimed": True,
+                    "claimed_at": datetime.utcnow()
+                }
+            }
+        )
+        
+        # Award XP to user
+        await self.db.users.update_one(
+            {"_id": user_id},
+            {
+                "$inc": {"total_xp": quest["xp_reward"]},
+                "$set": {"last_active": datetime.utcnow()}
+            }
+        )
+        
+        return True
+
+class UserSettingsService:
+    def __init__(self, db: AsyncIOMotorDatabase):
+        self.db = db
+    
+    async def get_user_settings(self, user_id: str) -> UserSettings:
+        """Get user settings."""
+        user = await self.db.users.find_one({"_id": user_id})
+        if not user:
+            return UserSettings()
+        
+        return UserSettings(
+            use_predefined_categories=user.get("use_predefined_categories", True),
+            notifications=user.get("notifications", True),
+            auto_save=user.get("auto_save", True),
+            theme=user.get("theme", "dark"),
+            sound_effects=user.get("sound_effects", True),
+            daily_goal=user.get("daily_goal", 120),
+            streak_reminders=user.get("streak_reminders", True)
+        )
+    
+    async def update_user_settings(self, user_id: str, settings: UserSettingsUpdate) -> bool:
+        """Update user settings."""
+        update_data = {k: v for k, v in settings.dict().items() if v is not None}
+        if not update_data:
+            return False
+        
+        update_data["updated_at"] = datetime.utcnow()
+        
+        result = await self.db.users.update_one(
+            {"_id": user_id},
+            {"$set": update_data}
+        )
+        
+        return result.modified_count > 0
 
 from fastapi import HTTPException
