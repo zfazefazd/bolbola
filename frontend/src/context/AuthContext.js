@@ -28,11 +28,27 @@ export const AuthProvider = ({ children }) => {
 
   const loadUser = async () => {
     try {
+      console.log('AuthContext: Loading user with token:', token ? 'present' : 'missing');
       const response = await api.get('/auth/me');
+      console.log('AuthContext: User loaded successfully:', response.data.username);
       setUser(response.data);
     } catch (error) {
-      console.error('Failed to load user:', error);
-      logout();
+      console.error('AuthContext: Failed to load user:', error);
+      console.log('AuthContext: Error details:', {
+        status: error.response?.status,
+        message: error.response?.data?.detail || error.message,
+        token: token ? 'present' : 'missing'
+      });
+      
+      // Only logout if it's a real auth error (401), not network issues
+      if (error.response?.status === 401) {
+        console.log('AuthContext: 401 error - logging out');
+        logout();
+      } else {
+        console.log('AuthContext: Non-auth error - keeping user logged in');
+        // For network errors, keep user logged in but show they're offline
+        setUser(prev => prev || { offline: true });
+      }
     } finally {
       setLoading(false);
     }
