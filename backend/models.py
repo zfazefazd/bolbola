@@ -60,6 +60,7 @@ class UserProfile(BaseModel):
     joined_at: datetime
     last_active: datetime
     total_time_minutes: int = 0
+    use_predefined_categories: bool = True
 
 class UserResponse(BaseModel):
     id: str
@@ -72,6 +73,25 @@ class UserResponse(BaseModel):
     last_active: datetime
     access_token: str
     token_type: str = "bearer"
+    use_predefined_categories: bool = True
+
+class UserSettings(BaseModel):
+    use_predefined_categories: bool = True
+    notifications: bool = True
+    auto_save: bool = True
+    theme: str = "dark"
+    sound_effects: bool = True
+    daily_goal: int = 120
+    streak_reminders: bool = True
+
+class UserSettingsUpdate(BaseModel):
+    use_predefined_categories: Optional[bool] = None
+    notifications: Optional[bool] = None
+    auto_save: Optional[bool] = None
+    theme: Optional[str] = None
+    sound_effects: Optional[bool] = None
+    daily_goal: Optional[int] = None
+    streak_reminders: Optional[bool] = None
 
 # Category Models
 class CategoryCreate(BaseModel):
@@ -87,6 +107,16 @@ class Category(BaseModel):
     color: str
     description: str
     user_id: str
+    is_predefined: bool = False
+    created_at: datetime
+
+class PredefinedCategory(BaseModel):
+    id: str
+    name: str
+    icon: str
+    color: str
+    description: str
+    is_predefined: bool = True
     created_at: datetime
 
 # Skill Models
@@ -165,11 +195,22 @@ class UserQuest(BaseModel):
     id: str
     user_id: str
     quest_id: str
+    name: str
+    description: str
+    quest_type: str
+    target_value: int
+    xp_reward: int
     progress: int = 0
     completed: bool = False
     claimed: bool = False
     start_date: datetime
     end_date: datetime
+
+class QuestProgress(BaseModel):
+    quest_id: str
+    progress: int
+    completed: bool
+    claimed: bool
 
 # Leaderboard Models
 class LeaderboardEntry(BaseModel):

@@ -3,6 +3,7 @@ Default data initialization for Galactic Quest
 """
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from datetime import datetime
+import uuid
 
 # Default achievements data
 DEFAULT_ACHIEVEMENTS = [
@@ -188,48 +189,91 @@ DEFAULT_ACHIEVEMENTS = [
     }
 ]
 
-# Default categories
-DEFAULT_CATEGORIES = [
+# Default predefined categories (will be created as system categories)
+DEFAULT_PREDEFINED_CATEGORIES = [
     {
+        "_id": "predefined-mind",
         "name": "Mind",
         "icon": "🧠",
         "color": "#00BFA6",
-        "description": "Mental development and learning"
+        "description": "Mental development and learning",
+        "is_predefined": True
     },
     {
+        "_id": "predefined-body",
         "name": "Body",
         "icon": "💪",
         "color": "#2962FF",
-        "description": "Physical fitness and health"
+        "description": "Physical fitness and health",
+        "is_predefined": True
     },
     {
+        "_id": "predefined-creativity",
         "name": "Creativity",
         "icon": "🎨",
         "color": "#BB86FC",
-        "description": "Creative expression and arts"
+        "description": "Creative expression and arts",
+        "is_predefined": True
     },
     {
+        "_id": "predefined-productivity",
         "name": "Productivity",
         "icon": "⚡",
         "color": "#FFD54F",
-        "description": "Work efficiency and organization"
+        "description": "Work efficiency and organization",
+        "is_predefined": True
     },
     {
+        "_id": "predefined-social",
         "name": "Social",
         "icon": "🤝",
         "color": "#FF6B6B",
-        "description": "Relationships and communication"
+        "description": "Relationships and communication",
+        "is_predefined": True
     },
     {
+        "_id": "predefined-spiritual",
         "name": "Spiritual",
         "icon": "🕯️",
         "color": "#9C27B0",
-        "description": "Inner peace and mindfulness"
+        "description": "Inner peace and mindfulness",
+        "is_predefined": True
+    }
+]
+
+# Default quest templates
+DEFAULT_QUEST_TEMPLATES = [
+    {
+        "_id": "daily-grind",
+        "name": "Daily Grind",
+        "description": "Log time in 3 different skills today",
+        "quest_type": "daily",
+        "target_value": 3,
+        "xp_reward": 75,
+        "criteria": {"skill_count": 3, "period": "day"}
+    },
+    {
+        "_id": "time-investor",
+        "name": "Time Investor", 
+        "description": "Spend 2+ hours on any activity today",
+        "quest_type": "daily",
+        "target_value": 120,
+        "xp_reward": 100,
+        "criteria": {"min_minutes": 120, "period": "day"}
+    },
+    {
+        "_id": "consistency-master",
+        "name": "Consistency Master",
+        "description": "Log activity every day this week",
+        "quest_type": "weekly",
+        "target_value": 7,
+        "xp_reward": 300,
+        "criteria": {"consecutive_days": 7, "period": "week"}
     }
 ]
 
 async def initialize_default_data(db: AsyncIOMotorDatabase):
-    """Initialize default achievements and other data."""
+    """Initialize default achievements, predefined categories, and quest templates."""
     
     # Initialize achievements
     existing_achievements = await db.achievements.count_documents({})
@@ -237,4 +281,111 @@ async def initialize_default_data(db: AsyncIOMotorDatabase):
         await db.achievements.insert_many(DEFAULT_ACHIEVEMENTS)
         print(f"Inserted {len(DEFAULT_ACHIEVEMENTS)} default achievements")
     
+    # Initialize predefined categories (system-wide)
+    existing_predefined = await db.predefined_categories.count_documents({})
+    if existing_predefined == 0:
+        predefined_with_timestamps = []
+        for category in DEFAULT_PREDEFINED_CATEGORIES:
+            cat_doc = category.copy()
+            cat_doc["created_at"] = datetime.utcnow()
+            predefined_with_timestamps.append(cat_doc)
+        
+        await db.predefined_categories.insert_many(predefined_with_timestamps)
+        print(f"Inserted {len(DEFAULT_PREDEFINED_CATEGORIES)} predefined categories")
+    
+    # Initialize quest templates
+    existing_quests = await db.quest_templates.count_documents({})
+    if existing_quests == 0:
+        quest_templates_with_timestamps = []
+        for quest in DEFAULT_QUEST_TEMPLATES:
+            quest_doc = quest.copy()
+            quest_doc["created_at"] = datetime.utcnow()
+            quest_templates_with_timestamps.append(quest_doc)
+        
+        await db.quest_templates.insert_many(quest_templates_with_timestamps)
+        print(f"Inserted {len(DEFAULT_QUEST_TEMPLATES)} quest templates")
+    
     print("Default data initialization completed")
+
+async def initialize_user_default_data(db: AsyncIOMotorDatabase, user_id: str):
+    """Initialize default user-specific data when a new user registers."""
+    
+    # Create user's predefined categories from templates
+    existing_user_categories = await db.categories.count_documents({"user_id": user_id})
+    if existing_user_categories == 0:
+        user_categories = []
+        for predefined in DEFAULT_PREDEFINED_CATEGORIES:
+            user_cat = {
+                "_id": str(uuid.uuid4()),
+                "name": predefined["name"],
+                "icon": predefined["icon"],
+                "color": predefined["color"],
+                "description": predefined["description"],
+                "user_id": user_id,
+                "is_predefined": True,
+                "created_at": datetime.utcnow()
+            }
+            user_categories.append(user_cat)
+        
+        await db.categories.insert_many(user_categories)
+        print(f"Created {len(user_categories)} predefined categories for user {user_id}")
+    
+    # Initialize user's daily and weekly quests
+    today = datetime.utcnow().date()
+    existing_user_quests = await db.user_quests.count_documents({
+        "user_id": user_id,
+        "start_date": {"$gte": datetime.combine(today, datetime.min.time())}
+    })
+    
+    if existing_user_quests == 0:
+        user_quests = []
+        
+        # Create daily quests
+        for template in DEFAULT_QUEST_TEMPLATES:
+            if template["quest_type"] == "daily":
+                user_quest = {
+                    "_id": str(uuid.uuid4()),
+                    "user_id": user_id,
+                    "quest_id": template["_id"],
+                    "name": template["name"],
+                    "description": template["description"],
+                    "quest_type": template["quest_type"],
+                    "target_value": template["target_value"],
+                    "xp_reward": template["xp_reward"],
+                    "progress": 0,
+                    "completed": False,
+                    "claimed": False,
+                    "start_date": datetime.combine(today, datetime.min.time()),
+                    "end_date": datetime.combine(today, datetime.max.time()),
+                    "created_at": datetime.utcnow()
+                }
+                user_quests.append(user_quest)
+            
+            elif template["quest_type"] == "weekly":
+                # Calculate week start (Monday) and end (Sunday)
+                from datetime import timedelta
+                weekday = today.weekday()
+                week_start = today - timedelta(days=weekday)
+                week_end = week_start + timedelta(days=6)
+                
+                user_quest = {
+                    "_id": str(uuid.uuid4()),
+                    "user_id": user_id,
+                    "quest_id": template["_id"],
+                    "name": template["name"],
+                    "description": template["description"],
+                    "quest_type": template["quest_type"],
+                    "target_value": template["target_value"],
+                    "xp_reward": template["xp_reward"],
+                    "progress": 0,
+                    "completed": False,
+                    "claimed": False,
+                    "start_date": datetime.combine(week_start, datetime.min.time()),
+                    "end_date": datetime.combine(week_end, datetime.max.time()),
+                    "created_at": datetime.utcnow()
+                }
+                user_quests.append(user_quest)
+        
+        if user_quests:
+            await db.user_quests.insert_many(user_quests)
+            print(f"Created {len(user_quests)} quests for user {user_id}")
