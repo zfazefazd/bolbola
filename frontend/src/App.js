@@ -250,8 +250,50 @@ const MainApp = () => {
   };
 
   const handleEditCategory = (category) => {
-    // TODO: Implement edit category functionality
-    console.log('Edit category:', category.name);
+    setToast({
+      message: `Edit category functionality for "${category.name}" coming soon!`,
+      type: 'info'
+    });
+  };
+
+  const handleAddSkill = async (skillData) => {
+    try {
+      const response = await skillsAPI.create(skillData);
+      setSkills(prev => [...prev, response.data]);
+      setToast({
+        message: `Skill "${skillData.name}" added successfully!`,
+        type: 'success'
+      });
+    } catch (error) {
+      console.error('Failed to add skill:', error);
+      setToast({
+        message: 'Failed to add skill: ' + handleApiError(error),
+        type: 'error'
+      });
+    }
+  };
+
+  const handleProfileClick = () => {
+    setIsProfileModalOpen(true);
+  };
+
+  const handleSettingsClick = () => {
+    setIsSettingsModalOpen(true);
+  };
+
+  const handleSettingsSave = (settingsData) => {
+    // Update user settings
+    if (settingsData.username !== user.username || settingsData.avatar !== user.avatar) {
+      updateUser({
+        username: settingsData.username,
+        avatar: settingsData.avatar
+      });
+    }
+    
+    setToast({
+      message: 'Settings saved successfully!',
+      type: 'success'
+    });
   };
 
   const formatTime = (minutes) => {
