@@ -9,11 +9,11 @@ const CategoryTabs = ({ categories, activeCategory, onCategoryChange, skills, on
   const [newCategory, setNewCategory] = useState({ name: '', icon: '📂', color: '#00BFA6', description: '' });
 
   const getCategoryStats = (categoryId) => {
-    const categorySkills = skills.filter(skill => skill.category === categoryId);
+    const categorySkills = skills.filter(skill => skill.category_id === categoryId);
     if (categorySkills.length === 0) return { percentage: 0, totalTime: 0, totalXP: 0 };
     
-    const totalTime = categorySkills.reduce((sum, skill) => sum + (skill.totalTimeMinutes || 0), 0);
-    const totalXP = categorySkills.reduce((sum, skill) => sum + (skill.totalXP || 0), 0);
+    const totalTime = categorySkills.reduce((sum, skill) => sum + (skill.total_time_minutes || 0), 0);
+    const totalXP = categorySkills.reduce((sum, skill) => sum + (skill.total_xp || 0), 0);
     
     // Calculate percentage based on average skill progress
     const avgLevel = categorySkills.reduce((sum, skill) => {
