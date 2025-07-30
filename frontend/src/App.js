@@ -20,7 +20,9 @@ import {
   timeLogsAPI, 
   leaderboardAPI, 
   achievementsAPI,
+  questsAPI, 
   statsAPI,
+  settingsAPI,
   handleApiError 
 } from './services/api';
 
