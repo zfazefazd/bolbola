@@ -33,7 +33,8 @@ api.interceptors.response.use(
       // Token expired or invalid
       localStorage.removeItem('auth_token');
       delete api.defaults.headers.common['Authorization'];
-      window.location.href = '/login';
+      // Don't force redirect, let React handle auth state
+      console.log('401 error: Token expired or invalid');
     }
     return Promise.reject(error);
   }
