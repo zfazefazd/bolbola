@@ -13,32 +13,18 @@ async def get_database() -> AsyncIOMotorDatabase:
     return db.database
 
 async def connect_to_mongo():
-    """Create database connection with proper SSL configuration"""
+    """Create database connection with simple configuration"""
     mongo_url = os.environ.get('MONGO_URL')
     db_name = os.environ.get('DB_NAME', 'galactic_quest')
     
     if not mongo_url:
         raise ValueError("MONGO_URL environment variable is required")
     
-    # Configure MongoDB client with correct options for current PyMongo version
-    client_options = {
-        'serverSelectionTimeoutMS': 10000,  # 10 seconds timeout
-        'connectTimeoutMS': 10000,
-        'socketTimeoutMS': 10000,
-        'maxPoolSize': 10,
-        'retryWrites': True
-    }
-    
-    # For Atlas connections, use correct SSL options
-    if 'mongodb+srv://' in mongo_url or 'mongodb.net' in mongo_url:
-        client_options.update({
-            'tls': True,  # Use 'tls' instead of 'ssl'
-            'tlsInsecure': True  # Allow invalid certificates
-        })
-    
     try:
-        logging.info(f"Connecting to MongoDB at: {mongo_url[:20]}...")
-        db.client = AsyncIOMotorClient(mongo_url, **client_options)
+        logging.info(f"Connecting to MongoDB at: {mongo_url[:30]}...")
+        
+        # Simple connection - let MongoDB handle SSL automatically
+        db.client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=10000)
         
         # Test the connection
         await db.client.admin.command('ping')
