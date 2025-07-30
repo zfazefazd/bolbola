@@ -18,7 +18,7 @@ const SkillCard = ({ skill, category, onLogTime, onEditSkill, onDeleteSkill }) =
     const currentLevel = getTimeBasedLevel();
     const minutesForCurrentLevel = (currentLevel - 1) * 120;
     const minutesForNextLevel = currentLevel * 120;
-    const progressMinutes = (skill.totalTimeMinutes || 0) - minutesForCurrentLevel;
+    const progressMinutes = (skill.total_time_minutes || 0) - minutesForCurrentLevel;
     const neededMinutes = minutesForNextLevel - minutesForCurrentLevel;
     const percentage = Math.min((progressMinutes / neededMinutes) * 100, 100);
     
