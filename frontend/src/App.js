@@ -68,9 +68,15 @@ const MainApp = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+  const [isAddSkillModalOpen, setIsAddSkillModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isEditSkillModalOpen, setIsEditSkillModalOpen] = useState(false);
+  const [selectedSkillForEdit, setSelectedSkillForEdit] = useState(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userStats, setUserStats] = useState(null);
 
   // Load all data when user is authenticated
   useEffect(() => {
