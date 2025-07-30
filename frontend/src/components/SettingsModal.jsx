@@ -6,6 +6,7 @@ const SettingsModal = ({ isOpen, onClose, user, onSave }) => {
   const [settings, setSettings] = useState({
     username: user?.username || '',
     avatar: user?.avatar || '🌟',
+    usePredefinedCategories: user?.use_predefined_categories ?? true,
     notifications: true,
     autoSave: true,
     theme: 'dark',
