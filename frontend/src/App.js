@@ -425,6 +425,39 @@ const MainApp = () => {
           onConfirm={handleConfirmTime}
         />
 
+        {/* Add Skill Modal */}
+        <AddSkillModal
+          isOpen={isAddSkillModalOpen}
+          onClose={() => setIsAddSkillModalOpen(false)}
+          categories={categories}
+          onConfirm={handleAddSkill}
+        />
+
+        {/* Profile Modal */}
+        <ProfileModal
+          isOpen={isProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+          user={user}
+          userStats={userStats}
+        />
+
+        {/* Settings Modal */}
+        <SettingsModal
+          isOpen={isSettingsModalOpen}
+          onClose={() => setIsSettingsModalOpen(false)}
+          user={user}
+          onSave={handleSettingsSave}
+        />
+
+        {/* Edit Skill Modal */}
+        <EditSkillModal
+          isOpen={isEditSkillModalOpen}
+          onClose={() => setIsEditSkillModalOpen(false)}
+          skill={selectedSkillForEdit}
+          categories={categories}
+          onConfirm={handleConfirmEditSkill}
+        />
+
         {/* Toast Notifications */}
         {toast && (
           <ToastNotification
