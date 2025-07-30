@@ -169,9 +169,13 @@ const MainApp = () => {
         // Note: The backend calculates the new rank, but for immediate UI update we'll refetch user data
       });
 
-      // Refresh leaderboard
-      const leaderboardRes = await leaderboardAPI.get();
-      setLeaderboard(leaderboardRes.data.entries);
+      // Refresh leaderboard and achievements
+      const [leaderboardRes, achievementsRes] = await Promise.all([
+        leaderboardAPI.get(),
+        achievementsAPI.getAll()
+      ]);
+      setLeaderboard(leaderboardRes.data.entries || []);
+      setAchievements(achievementsRes.data);
 
       setToast({
         message: `+${response.data.xp_earned} XP earned! ${formatTime(timeMinutes)} logged for ${skill.name}`,
