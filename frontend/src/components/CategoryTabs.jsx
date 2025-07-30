@@ -17,7 +17,7 @@ const CategoryTabs = ({ categories, activeCategory, onCategoryChange, skills, on
     
     // Calculate percentage based on average skill progress
     const avgLevel = categorySkills.reduce((sum, skill) => {
-      const level = Math.floor((skill.totalTimeMinutes || 0) / 120) + 1;
+      const level = Math.floor((skill.total_time_minutes || 0) / 120) + 1;
       return sum + level;
     }, 0) / categorySkills.length;
     
