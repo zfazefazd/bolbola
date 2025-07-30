@@ -121,6 +121,10 @@ const AddSkillModal = ({ isOpen, onClose, categories, onConfirm }) => {
               <div className="w-full py-2 px-3 bg-[#1E1E2F]/50 border border-[#00BFA6]/20 rounded-lg text-gray-400">
                 Loading categories...
               </div>
+            ) : availableCategories.length === 0 ? (
+              <div className="w-full py-2 px-3 bg-[#1E1E2F]/50 border border-red-500/20 rounded-lg text-red-400">
+                ⚠️ No categories available. Please try refreshing or contact support.
+              </div>
             ) : (
               <select
                 value={skillData.category_id}
