@@ -160,12 +160,12 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
         {showProgress && (
           <div className="mt-2 space-y-1">
             <p className="text-[#FFD54F] font-mono text-sm">
-              {totalXP.toLocaleString()} XP
+              {(totalXP || 0).toLocaleString()} XP
             </p>
             
             {nextRank ? (
               <div className="text-xs text-gray-400">
-                <span className="text-[#00BFA6]">{progress.xpNeeded.toLocaleString()} XP</span>
+                <span className="text-[#00BFA6]">{(progress?.xpNeeded || 0).toLocaleString()} XP</span>
                 {' '}to {nextRank.tier} {nextRank.division}
               </div>
             ) : (
