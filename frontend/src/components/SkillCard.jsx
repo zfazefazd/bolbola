@@ -104,8 +104,8 @@ const SkillCard = ({ skill, category, onLogTime, onEditSkill, onDeleteSkill }) =
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
           <div className="text-[#00BFA6] text-sm font-mono">
-            <span className="font-bold">{formatTime(skill.totalTimeMinutes || 0)}</span>
-            <span className="text-gray-400 ml-2">• {skill.totalXP || 0} XP</span>
+            <span className="font-bold">{formatTime(skill.total_time_minutes || 0)}</span>
+            <span className="text-gray-400 ml-2">• {skill.total_xp || 0} XP</span>
           </div>
           <span className="text-gray-400 text-xs">
             Next level: {formatTime(progress.nextLevelMinutes)}
