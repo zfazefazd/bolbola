@@ -42,7 +42,7 @@ const Header = ({ user, totalXP, onProfileClick, onSettingsClick }) => {
         {/* Actions Section */}
         <div className="flex items-center space-x-4">
           <div className="text-right">
-            <p className="text-[#FFD54F] font-mono text-2xl font-bold">{totalXP.toLocaleString()}</p>
+            <p className="text-[#FFD54F] font-mono text-2xl font-bold">{(totalXP || 0).toLocaleString()}</p>
             <p className="text-gray-400 text-sm">Total XP</p>
           </div>
           
