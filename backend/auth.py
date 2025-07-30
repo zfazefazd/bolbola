@@ -176,6 +176,7 @@ class AuthService:
             "avatar": user["avatar"],
             "total_xp": user["total_xp"],
             "current_rank": user["current_rank"],
+            "use_predefined_categories": user.get("use_predefined_categories", True),
             "joined_at": user["joined_at"],
             "last_active": user["last_active"],
             "access_token": access_token,
