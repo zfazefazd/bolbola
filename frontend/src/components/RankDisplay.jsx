@@ -97,7 +97,7 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
     }
   };
 
-  const rankArt = getRankIllustration(rank.tier, rank.division);
+  const rankArt = getRankIllustration(rank?.tier, rank?.division);
   const sizeClass = size === 'large' ? 'w-32 h-32' : size === 'medium' ? 'w-20 h-20' : 'w-12 h-12';
   const textSize = size === 'large' ? 'text-2xl' : size === 'medium' ? 'text-lg' : 'text-sm';
 
