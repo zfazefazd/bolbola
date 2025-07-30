@@ -8,12 +8,15 @@ import os
 import logging
 from pathlib import Path
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 # Import our new modules
 from database import connect_to_mongo, close_mongo_connection, get_database
 from auth import AuthService, get_current_user
-from services import SkillService, CategoryService, TimeLogService, LeaderboardService, AchievementService
+from services import (
+    SkillService, CategoryService, TimeLogService, LeaderboardService, 
+    AchievementService, QuestService, UserSettingsService
+)
 from models import *
 
 ROOT_DIR = Path(__file__).parent
@@ -83,14 +86,41 @@ async def get_current_user_profile(current_user=Depends(get_current_user)):
         current_rank=current_user["current_rank"],
         joined_at=current_user["joined_at"],
         last_active=current_user["last_active"],
-        total_time_minutes=current_user.get("total_time_minutes", 0)
+        total_time_minutes=current_user.get("total_time_minutes", 0),
+        use_predefined_categories=current_user.get("use_predefined_categories", True)
     )
+
+# User settings routes
+@api_router.get("/settings", response_model=UserSettings)
+async def get_user_settings(
+    current_user=Depends(get_current_user),
+    db=Depends(get_database)
+):
+    settings_service = UserSettingsService(db)
+    return await settings_service.get_user_settings(current_user["_id"])
+
+@api_router.patch("/settings", response_model=MessageResponse)
+async def update_user_settings(
+    settings: UserSettingsUpdate,
+    current_user=Depends(get_current_user),
+    db=Depends(get_database)
+):
+    settings_service = UserSettingsService(db)
+    success = await settings_service.update_user_settings(current_user["_id"], settings)
+    if not success:
+        raise HTTPException(status_code=400, detail="Failed to update settings")
+    return MessageResponse(message="Settings updated successfully")
 
 # Category routes
 @api_router.get("/categories", response_model=List[Category])
 async def get_categories(current_user=Depends(get_current_user), db=Depends(get_database)):
     category_service = CategoryService(db)
     return await category_service.get_user_categories(current_user["_id"])
+
+@api_router.get("/categories/predefined", response_model=List[PredefinedCategory])
+async def get_predefined_categories(db=Depends(get_database)):
+    category_service = CategoryService(db)
+    return await category_service.get_predefined_categories()
 
 @api_router.post("/categories", response_model=Category)
 async def create_category(
@@ -192,6 +222,30 @@ async def get_achievements(
     achievement_service = AchievementService(db)
     return await achievement_service.get_user_achievements(current_user["_id"])
 
+# Quest routes
+@api_router.get("/quests", response_model=Dict)
+async def get_user_quests(
+    current_user=Depends(get_current_user),
+    db=Depends(get_database)
+):
+    quest_service = QuestService(db)
+    return await quest_service.get_user_quests(current_user["_id"])
+
+@api_router.post("/quests/{quest_id}/claim", response_model=MessageResponse)
+async def claim_quest_reward(
+    quest_id: str,
+    current_user=Depends(get_current_user),
+    db=Depends(get_database)
+):
+    quest_service = QuestService(db)
+    success = await quest_service.claim_quest_reward(current_user["_id"], quest_id)
+    if not success:
+        raise HTTPException(
+            status_code=400, 
+            detail="Quest not found, not completed, or already claimed"
+        )
+    return MessageResponse(message="Quest reward claimed successfully!")
+
 # Stats routes
 @api_router.get("/stats/user", response_model=Dict)
 async def get_user_stats(
@@ -273,8 +327,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-from typing import Dict
 
 # For Render deployment
 if __name__ == "__main__":
