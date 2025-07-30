@@ -32,7 +32,7 @@ const Header = ({ user, totalXP, onProfileClick, onSettingsClick }) => {
         {/* Rank Display */}
         <div className="flex-1 flex justify-center">
           <RankDisplay 
-            rank={user.currentRank} 
+            rank={user.current_rank} 
             totalXP={totalXP} 
             size="large" 
             showProgress={true}
