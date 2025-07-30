@@ -2,12 +2,26 @@ import React from 'react';
 import { getRankProgress, getNextRank } from '../data/mock';
 
 const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => {
+  // Add null checks for rank
+  if (!rank || !rank.tier) {
+    return (
+      <div className="flex flex-col items-center">
+        <div className="w-32 h-32 rounded-full bg-gray-700 flex items-center justify-center">
+          <div className="text-2xl">⚙️</div>
+        </div>
+        <div className="text-center mt-4">
+          <h3 className="font-bold text-gray-400">Loading Rank...</h3>
+        </div>
+      </div>
+    );
+  }
+
   const progress = getRankProgress(totalXP, rank);
   const nextRank = getNextRank(rank);
   
   // Clean gaming rank illustrations - emoji-based system that works well
   const getRankIllustration = (tierName, division) => {
-    const tier = tierName.toLowerCase();
+    const tier = tierName?.toLowerCase() || 'iron';
     
     switch (tier) {
       case 'iron':
