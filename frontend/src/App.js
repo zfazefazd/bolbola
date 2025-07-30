@@ -329,11 +329,16 @@ const MainApp = () => {
     setIsSettingsModalOpen(true);
   };
 
-  const handleClaimReward = (reward) => {
+  const handleClaimReward = (message) => {
     setToast({
-      message: `🎉 Reward claimed: ${reward.name}!`,
+      message: `🎉 ${message}`,
       type: 'success'
     });
+    
+    // Refresh user data after claiming reward
+    setTimeout(() => {
+      loadAllData();
+    }, 1000);
   };
 
   const formatTime = (minutes) => {
