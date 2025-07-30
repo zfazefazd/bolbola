@@ -106,7 +106,7 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
       {/* Rank Badge */}
       <div className="relative mb-4">
         {/* Animated particles around higher ranks */}
-        {['master', 'grandmaster', 'challenger'].includes(rank.tier.toLowerCase()) && (
+        {rank?.tier && ['master', 'grandmaster', 'challenger'].includes(rank.tier.toLowerCase()) && (
           <div className="absolute inset-0 animate-spin-slow">
             {rankArt.particles.map((particle, i) => (
               <div
