@@ -83,6 +83,23 @@ const SettingsModal = ({ isOpen, onClose, user, onSave }) => {
             
             <div className="space-y-4">
               <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-white">Use Predefined Categories</span>
+                  <p className="text-xs text-gray-400">Use system categories or create your own</p>
+                </div>
+                <button
+                  onClick={() => handleInputChange('usePredefinedCategories', !settings.usePredefinedCategories)}
+                  className={`w-12 h-6 rounded-full transition-all duration-300 ${
+                    settings.usePredefinedCategories ? 'bg-gradient-to-r from-[#00BFA6] to-[#2962FF]' : 'bg-gray-600'
+                  }`}
+                >
+                  <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+                    settings.usePredefinedCategories ? 'translate-x-6' : 'translate-x-0.5'
+                  }`} />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between">
                 <span className="text-white">Notifications</span>
                 <button
                   onClick={() => handleInputChange('notifications', !settings.notifications)}
