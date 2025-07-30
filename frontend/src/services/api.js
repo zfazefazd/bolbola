@@ -47,8 +47,14 @@ export const authAPI = {
   getProfile: () => api.get('/auth/me'),
 };
 
+export const settingsAPI = {
+  get: () => api.get('/settings'),
+  update: (settings) => api.patch('/settings', settings),
+};
+
 export const categoriesAPI = {
   getAll: () => api.get('/categories'),
+  getPredefined: () => api.get('/categories/predefined'),
   create: (categoryData) => api.post('/categories', categoryData),
   delete: (categoryId) => api.delete(`/categories/${categoryId}`),
 };
@@ -75,6 +81,11 @@ export const leaderboardAPI = {
 
 export const achievementsAPI = {
   getAll: () => api.get('/achievements'),
+};
+
+export const questsAPI = {
+  getAll: () => api.get('/quests'),
+  claimReward: (questId) => api.post(`/quests/${questId}/claim`),
 };
 
 export const statsAPI = {
