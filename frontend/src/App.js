@@ -390,7 +390,10 @@ const MainApp = () => {
                   <div className="text-6xl mb-4">🚀</div>
                   <h3 className="text-xl font-bold text-white mb-2">No skills in this category yet</h3>
                   <p className="text-gray-400 mb-6">Start your galactic quest by adding your first skill!</p>
-                  <button className="px-6 py-3 bg-gradient-to-r from-[#00BFA6] to-[#2962FF] text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-[#00BFA6]/25 transition-all duration-300 hover:-translate-y-1">
+                  <button 
+                    onClick={() => setIsAddSkillModalOpen(true)}
+                    className="px-6 py-3 bg-gradient-to-r from-[#00BFA6] to-[#2962FF] text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-[#00BFA6]/25 transition-all duration-300 hover:-translate-y-1"
+                  >
                     Add Your First Skill
                   </button>
                 </div>
