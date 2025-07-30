@@ -114,7 +114,7 @@ const MainApp = () => {
       setCategories(categoriesRes.data);
       setSkills(skillsRes.data);
       setAchievements(achievementsRes.data);
-      setLeaderboard(leaderboardRes.data.entries);
+      setLeaderboard(leaderboardRes.data.entries || []);
       setUserStats(statsRes.data);
 
       // Set default active category if we have categories
