@@ -114,6 +114,13 @@ class AuthService:
             "total_xp": 0,
             "current_rank": initial_rank,
             "total_time_minutes": 0,
+            "use_predefined_categories": True,  # Default to using predefined categories
+            "notifications": True,
+            "auto_save": True,
+            "theme": "dark",
+            "sound_effects": True,
+            "daily_goal": 120,
+            "streak_reminders": True,
             "joined_at": now,
             "last_active": now,
             "created_at": now,
@@ -121,6 +128,10 @@ class AuthService:
         }
         
         await self.db.users.insert_one(user_doc)
+        
+        # Initialize user's default data (predefined categories and initial quests)
+        from init_data import initialize_user_default_data
+        await initialize_user_default_data(self.db, user_id)
         
         # Create access token
         access_token = create_access_token(data={"sub": user_id})
@@ -132,6 +143,7 @@ class AuthService:
             "avatar": avatar,
             "total_xp": 0,
             "current_rank": initial_rank,
+            "use_predefined_categories": True,
             "joined_at": now,
             "last_active": now,
             "access_token": access_token,
