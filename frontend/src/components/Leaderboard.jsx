@@ -37,11 +37,11 @@ const Leaderboard = ({ leaderboard, currentUser }) => {
       <Card className="bg-gradient-to-br from-[#1E1E2F]/90 to-[#2A2A3F]/90 backdrop-blur-lg border-[#00BFA6]/20 rounded-2xl p-6">
         <div className="space-y-4">
           {leaderboard.map((player, index) => {
-            const isCurrentUser = player.id === currentUser?.id;
+            const isCurrentUser = player.user_id === currentUser?.id;
             
             return (
               <div
-                key={player.id}
+                key={player.user_id}
                 className={`flex items-center justify-between p-4 rounded-xl transition-all duration-300 hover:-translate-y-1 ${
                   isCurrentUser
                     ? 'bg-gradient-to-r from-[#00BFA6]/20 to-[#2962FF]/20 border-2 border-[#00BFA6]/40 shadow-lg shadow-[#00BFA6]/10'
@@ -54,9 +54,9 @@ const Leaderboard = ({ leaderboard, currentUser }) => {
                     {/* Rank Badge */}
                     <div 
                       className="absolute -top-2 -left-2 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold z-10 border-2 border-[#1E1E2F]"
-                      style={{ backgroundColor: getRankColor(player.rank) }}
+                      style={{ backgroundColor: getRankColor(player.rank_position || index + 1) }}
                     >
-                      <span className="text-black">#{player.rank}</span>
+                      <span className="text-black">#{player.rank_position || index + 1}</span>
                     </div>
                     
                     {/* Avatar */}
@@ -72,8 +72,8 @@ const Leaderboard = ({ leaderboard, currentUser }) => {
                       <h3 className={`font-bold text-lg ${isCurrentUser ? 'text-[#00BFA6]' : 'text-white'}`}>
                         {player.username}
                       </h3>
-                      {player.rank <= 3 && (
-                        <span className="text-xl">{getRankIcon(player.rank)}</span>
+                      {(player.rank_position || index + 1) <= 3 && (
+                        <span className="text-xl">{getRankIcon(player.rank_position || index + 1)}</span>
                       )}
                       {isCurrentUser && (
                         <span className="text-xs bg-gradient-to-r from-[#00BFA6] to-[#2962FF] text-white px-2 py-1 rounded-full font-bold">
@@ -87,12 +87,12 @@ const Leaderboard = ({ leaderboard, currentUser }) => {
                       <div className="flex items-center space-x-2">
                         <span 
                           className="text-sm font-bold font-[Montserrat] uppercase"
-                          style={{ color: player.currentRank?.color || '#8B4513' }}
+                          style={{ color: player.current_rank?.color || '#8B4513' }}
                         >
-                          {player.currentRank?.tier || 'Iron'} {player.currentRank?.division || 'IV'}
+                          {player.current_rank?.tier || 'Iron'} {player.current_rank?.division || 'IV'}
                         </span>
                         <span className="text-xs text-gray-400">
-                          • {player.totalXP?.toLocaleString() || '0'} XP
+                          • {(player.total_xp || 0).toLocaleString()} XP
                         </span>
                       </div>
                     </div>
@@ -105,7 +105,7 @@ const Leaderboard = ({ leaderboard, currentUser }) => {
                     <div className="flex items-center space-x-2">
                       <div>
                         <p className="text-[#FFD54F] font-mono text-xl font-bold">
-                          {(player.totalXP || 0).toLocaleString()}
+                          {(player.total_xp || 0).toLocaleString()}
                         </p>
                         <p className="text-gray-400 text-xs">Total XP</p>
                       </div>
@@ -113,8 +113,8 @@ const Leaderboard = ({ leaderboard, currentUser }) => {
                       {/* Mini Rank Display */}
                       <div className="ml-2">
                         <RankDisplay 
-                          rank={player.currentRank} 
-                          totalXP={player.totalXP} 
+                          rank={player.current_rank} 
+                          totalXP={player.total_xp} 
                           size="small" 
                           showProgress={false}
                         />
@@ -124,7 +124,7 @@ const Leaderboard = ({ leaderboard, currentUser }) => {
                   
                   {/* Trend Indicator */}
                   <div className="w-8 text-center">
-                    {player.rank <= 3 && (
+                    {(player.rank_position || index + 1) <= 3 && (
                       <div className="text-green-400 text-lg animate-bounce">
                         ↗
                       </div>
