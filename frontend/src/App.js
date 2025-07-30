@@ -389,6 +389,7 @@ const MainApp = () => {
                     onLogTime={handleLogTime}
                     onEditSkill={handleEditSkill}
                     onDeleteSkill={handleDeleteSkill}
+                    onShowStats={handleShowSkillStats}
                   />
                 ))}
               </div>
