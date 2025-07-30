@@ -339,8 +339,8 @@ const MainApp = () => {
         <Header 
           user={user}
           totalXP={user.total_xp}
-          onProfileClick={() => console.log('Profile clicked')}
-          onSettingsClick={() => console.log('Settings clicked')}
+          onProfileClick={handleProfileClick}
+          onSettingsClick={handleSettingsClick}
         />
 
         {/* Category Navigation */}
