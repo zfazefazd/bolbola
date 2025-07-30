@@ -101,17 +101,19 @@ const MainApp = () => {
   const loadAllData = async () => {
     try {
       setLoading(true);
-      const [categoriesRes, skillsRes, achievementsRes, leaderboardRes] = await Promise.all([
+      const [categoriesRes, skillsRes, achievementsRes, leaderboardRes, statsRes] = await Promise.all([
         categoriesAPI.getAll(),
         skillsAPI.getAll(),
         achievementsAPI.getAll(),
-        leaderboardAPI.get()
+        leaderboardAPI.get(),
+        statsAPI.getUserStats().catch(() => ({ data: null })) // Optional stats
       ]);
 
       setCategories(categoriesRes.data);
       setSkills(skillsRes.data);
       setAchievements(achievementsRes.data);
       setLeaderboard(leaderboardRes.data.entries);
+      setUserStats(statsRes.data);
 
       // Set default active category if we have categories
       if (categoriesRes.data.length > 0 && activeCategory === 'all') {
