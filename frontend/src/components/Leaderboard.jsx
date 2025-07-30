@@ -87,12 +87,12 @@ const Leaderboard = ({ leaderboard, currentUser }) => {
                       <div className="flex items-center space-x-2">
                         <span 
                           className="text-sm font-bold font-[Montserrat] uppercase"
-                          style={{ color: player.currentRank.color }}
+                          style={{ color: player.currentRank?.color || '#8B4513' }}
                         >
-                          {player.currentRank.tier} {player.currentRank.division}
+                          {player.currentRank?.tier || 'Iron'} {player.currentRank?.division || 'IV'}
                         </span>
                         <span className="text-xs text-gray-400">
-                          • {player.totalXP.toLocaleString()} XP
+                          • {player.totalXP?.toLocaleString() || '0'} XP
                         </span>
                       </div>
                     </div>
