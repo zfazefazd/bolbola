@@ -4,9 +4,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 
 const AchievementsBadges = ({ achievements }) => {
   const [selectedAchievement, setSelectedAchievement] = useState(null);
+  const [showAllLocked, setShowAllLocked] = useState(false);
   
   const earnedAchievements = achievements.filter(a => a.earned);
   const unearned = achievements.filter(a => !a.earned);
+  
+  // Show only first 8 locked achievements unless expanded
+  const lockedToShow = showAllLocked ? unearned : unearned.slice(0, 8);
 
   const getAchievementRarity = (xpReward) => {
     if (xpReward >= 1000) return { name: 'Legendary', color: '#FF6347', glow: 'shadow-[#FF6347]/50' };
