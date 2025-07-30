@@ -162,7 +162,12 @@ const SkillCard = ({ skill, category, onLogTime, onEditSkill, onDeleteSkill }) =
             ✏️
           </button>
           <button 
-            onClick={() => console.log('View stats for', skill.name)}
+            onClick={() => {
+              setToast({
+                message: `📊 Stats for ${skill.name}: ${formatTime(skill.total_time_minutes || 0)} logged, ${skill.total_xp || 0} XP earned, Level ${getTimeBasedLevel()}`,
+                type: 'info'
+              });
+            }}
             className="p-2 bg-[#1E1E2F]/50 border border-[#BB86FC]/20 rounded-lg text-[#BB86FC] hover:bg-[#BB86FC]/10 hover:border-[#BB86FC]/40 transition-all duration-300"
             title="View Statistics"
           >
