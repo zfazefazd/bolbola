@@ -186,19 +186,45 @@ const MainApp = () => {
     }
   };
 
-  const handleSettingsSave = (settingsData) => {
-    // Update user settings
-    if (settingsData.username !== user.username || settingsData.avatar !== user.avatar) {
-      updateUser({
-        username: settingsData.username,
-        avatar: settingsData.avatar
+  const handleSettingsSave = async (settingsData) => {
+    try {
+      // Update backend settings
+      await settingsAPI.update({
+        use_predefined_categories: settingsData.usePredefinedCategories,
+        notifications: settingsData.notifications,
+        auto_save: settingsData.autoSave,
+        theme: settingsData.theme,
+        sound_effects: settingsData.soundEffects,
+        daily_goal: settingsData.dailyGoal,
+        streak_reminders: settingsData.streakReminders
+      });
+
+      // Update user profile data if username or avatar changed
+      if (settingsData.username !== user.username || settingsData.avatar !== user.avatar) {
+        updateUser({
+          username: settingsData.username,
+          avatar: settingsData.avatar,
+          use_predefined_categories: settingsData.usePredefinedCategories
+        });
+      }
+      
+      setToast({
+        message: 'Settings saved successfully!',
+        type: 'success'
+      });
+
+      // Reload categories if predefined setting changed
+      if (settingsData.usePredefinedCategories !== user.use_predefined_categories) {
+        const categoriesRes = await categoriesAPI.getAll();
+        setCategories(categoriesRes.data);
+      }
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      setToast({
+        message: 'Failed to save settings: ' + handleApiError(error),
+        type: 'error'
       });
     }
-    
-    setToast({
-      message: 'Settings saved successfully!',
-      type: 'success'
-    });
   };
 
   const handleShowSkillStats = (skill) => {
