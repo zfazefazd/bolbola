@@ -24,7 +24,7 @@ const Header = ({ user, totalXP, onProfileClick, onSettingsClick }) => {
             <h2 className="text-white font-bold text-xl">{user.username}</h2>
             <p className="text-[#00BFA6] text-sm font-mono">Galactic Explorer</p>
             <p className="text-gray-400 text-xs">
-              Member since {new Date(user.joinedAt).toLocaleDateString()}
+              Member since {new Date(user.joined_at).toLocaleDateString()}
             </p>
           </div>
         </div>
