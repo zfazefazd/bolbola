@@ -11,7 +11,7 @@ const SkillCard = ({ skill, category, onLogTime, onEditSkill, onDeleteSkill }) =
 
   const getTimeBasedLevel = () => {
     // Simple level calculation based on total time (every 2 hours = 1 level)
-    return Math.floor((skill.totalTimeMinutes || 0) / 120) + 1;
+    return Math.floor((skill.total_time_minutes || 0) / 120) + 1;
   };
 
   const getProgressToNextLevel = () => {
