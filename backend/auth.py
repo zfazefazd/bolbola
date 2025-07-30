@@ -4,6 +4,7 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 import os
+import uuid
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from database import get_database
 
