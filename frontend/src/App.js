@@ -192,8 +192,25 @@ const MainApp = () => {
   };
 
   const handleEditSkill = async (skill) => {
-    // TODO: Implement edit skill modal
-    console.log('Edit skill:', skill.name);
+    setSelectedSkillForEdit(skill);
+    setIsEditSkillModalOpen(true);
+  };
+
+  const handleConfirmEditSkill = async (skillId, skillData) => {
+    try {
+      const response = await skillsAPI.update(skillId, skillData);
+      setSkills(skills.map(s => s.id === skillId ? response.data : s));
+      setToast({
+        message: `${skillData.name} has been updated successfully!`,
+        type: 'success'
+      });
+    } catch (error) {
+      console.error('Failed to update skill:', error);
+      setToast({
+        message: 'Failed to update skill: ' + handleApiError(error),
+        type: 'error'
+      });
+    }
   };
 
   const handleDeleteSkill = async (skill) => {
