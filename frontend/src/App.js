@@ -364,7 +364,10 @@ const MainApp = () => {
                 <h2 className="text-2xl font-bold text-white font-montserrat uppercase tracking-wide">
                   {activeCategory === 'all' ? '🎯 All Skills' : `${categories.find(c => c.id === activeCategory)?.icon} ${categories.find(c => c.id === activeCategory)?.name} Skills`}
                 </h2>
-                <button className="px-4 py-2 bg-gradient-to-r from-[#00BFA6] to-[#2962FF] text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-[#00BFA6]/25 transition-all duration-300 hover:-translate-y-1">
+                <button 
+                  onClick={() => setIsAddSkillModalOpen(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-[#00BFA6] to-[#2962FF] text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-[#00BFA6]/25 transition-all duration-300 hover:-translate-y-1"
+                >
                   + Add New Skill
                 </button>
               </div>
