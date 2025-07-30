@@ -297,6 +297,13 @@ const MainApp = () => {
     setIsSettingsModalOpen(true);
   };
 
+  const handleClaimReward = (reward) => {
+    setToast({
+      message: `🎉 Reward claimed: ${reward.name}!`,
+      type: 'success'
+    });
+  };
+
   const formatTime = (minutes) => {
     if (minutes < 60) {
       return `${minutes}m`;
