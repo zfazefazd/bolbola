@@ -34,7 +34,7 @@ const SkillCard = ({ skill, category, onLogTime, onEditSkill, onDeleteSkill }) =
   const level = getTimeBasedLevel();
   const progress = getProgressToNextLevel();
   const isNearLevelUp = progress.percentage > 80;
-  const lastActive = skill.lastLoggedAt ? new Date(skill.lastLoggedAt) : null;
+  const lastActive = skill.last_logged_at ? new Date(skill.last_logged_at) : null;
 
   return (
     <Card 
