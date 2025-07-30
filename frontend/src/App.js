@@ -297,14 +297,6 @@ const MainApp = () => {
     setIsSettingsModalOpen(true);
   };
 
-  const handleShowSkillStats = (skill) => {
-    const level = Math.floor((skill.total_time_minutes || 0) / 120) + 1;
-    setToast({
-      message: `📊 ${skill.name}: ${formatTime(skill.total_time_minutes || 0)} logged, ${skill.total_xp || 0} XP earned, Level ${level}`,
-      type: 'info'
-    });
-  };
-
   const formatTime = (minutes) => {
     if (minutes < 60) {
       return `${minutes}m`;
