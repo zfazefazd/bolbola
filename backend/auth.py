@@ -238,5 +238,3 @@ class AuthService:
                 return rank
         
         return rank_system[0]  # Default to Iron IV
-
-import uuid
