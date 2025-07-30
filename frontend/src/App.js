@@ -6,6 +6,10 @@ import Header from './components/Header';
 import CategoryTabs from './components/CategoryTabs';
 import SkillCard from './components/SkillCard';
 import TimeLogModal from './components/TimeLogModal';
+import AddSkillModal from './components/AddSkillModal';
+import ProfileModal from './components/ProfileModal';
+import SettingsModal from './components/SettingsModal';
+import EditSkillModal from './components/EditSkillModal';
 import QuestsSidebar from './components/QuestsSidebar';
 import AchievementsBadges from './components/AchievementsBadges';
 import Leaderboard from './components/Leaderboard';
@@ -16,6 +20,7 @@ import {
   timeLogsAPI, 
   leaderboardAPI, 
   achievementsAPI,
+  statsAPI,
   handleApiError 
 } from './services/api';
 
