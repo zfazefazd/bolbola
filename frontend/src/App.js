@@ -456,8 +456,6 @@ const MainApp = () => {
 
         {/* Quests Sidebar */}
         <QuestsSidebar 
-          dailyQuests={[]} // TODO: Implement quests in backend
-          weeklyChallenge={{}} // TODO: Implement weekly challenges
           onClaimReward={handleClaimReward}
           isCollapsed={isSidebarCollapsed}
           onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
