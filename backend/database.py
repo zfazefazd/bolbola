@@ -20,7 +20,7 @@ async def connect_to_mongo():
     if not mongo_url:
         raise ValueError("MONGO_URL environment variable is required")
     
-    # Configure MongoDB client with SSL settings for Atlas
+    # Configure MongoDB client with correct options for current PyMongo version
     client_options = {
         'serverSelectionTimeoutMS': 10000,  # 10 seconds timeout
         'connectTimeoutMS': 10000,
@@ -29,13 +29,11 @@ async def connect_to_mongo():
         'retryWrites': True
     }
     
-    # Add SSL configuration for Atlas connections
+    # For Atlas connections, use correct SSL options
     if 'mongodb+srv://' in mongo_url or 'mongodb.net' in mongo_url:
         client_options.update({
-            'ssl': True,
-            'ssl_cert_reqs': 'CERT_NONE',  # Don't verify SSL certificates
-            'tlsAllowInvalidCertificates': True,
-            'tlsAllowInvalidHostnames': True
+            'tls': True,  # Use 'tls' instead of 'ssl'
+            'tlsInsecure': True  # Allow invalid certificates
         })
     
     try:
