@@ -38,6 +38,10 @@ const AddSkillModal = ({ isOpen, onClose, categories, onConfirm }) => {
       setShowPredefined(settingsRes.data.use_predefined_categories);
     } catch (error) {
       console.error('Failed to load data:', error);
+      // Fallback to default values on error
+      setUserSettings({ use_predefined_categories: true });
+      setPredefinedCategories([]);
+      setShowPredefined(true);
     } finally {
       setLoading(false);
     }
