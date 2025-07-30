@@ -85,13 +85,26 @@ const AchievementsBadges = ({ achievements }) => {
         {/* Locked Achievements by Type */}
         {unearned.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-400 mb-4 flex items-center">
-              🔒 Locked Achievements
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-400 flex items-center">
+                🔒 Locked Achievements
+              </h3>
+              {unearned.length > 8 && (
+                <button
+                  onClick={() => setShowAllLocked(!showAllLocked)}
+                  className="px-3 py-1 bg-gradient-to-r from-[#00BFA6]/20 to-[#2962FF]/20 border border-[#00BFA6]/40 rounded-lg text-[#00BFA6] text-sm hover:bg-[#00BFA6]/10 transition-all duration-300 flex items-center space-x-2"
+                >
+                  <span>{showAllLocked ? 'Show Less' : `Show All (${unearned.length})`}</span>
+                  <span className={`transform transition-transform duration-300 ${showAllLocked ? 'rotate-180' : ''}`}>
+                    ↓
+                  </span>
+                </button>
+              )}
+            </div>
             
             {/* Group by type */}
             {['legendary', 'mastery', 'consistency', 'variety', 'special'].map(type => {
-              const typeAchievements = unearned.filter(a => a.type === type);
+              const typeAchievements = lockedToShow.filter(a => a.type === type);
               if (typeAchievements.length === 0) return null;
               
               const typeNames = {
@@ -144,6 +157,16 @@ const AchievementsBadges = ({ achievements }) => {
                 </div>
               );
             })}
+            
+            {/* Show remaining achievements hint */}
+            {!showAllLocked && unearned.length > 8 && (
+              <div className="text-center py-4">
+                <div className="text-gray-500 text-sm mb-2">
+                  {unearned.length - 8} more achievements locked
+                </div>
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-600/30 to-transparent" />
+              </div>
+            )}
           </div>
         )}
       </div>
