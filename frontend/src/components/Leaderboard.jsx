@@ -105,7 +105,7 @@ const Leaderboard = ({ leaderboard, currentUser }) => {
                     <div className="flex items-center space-x-2">
                       <div>
                         <p className="text-[#FFD54F] font-mono text-xl font-bold">
-                          {player.totalXP.toLocaleString()}
+                          {(player.totalXP || 0).toLocaleString()}
                         </p>
                         <p className="text-gray-400 text-xs">Total XP</p>
                       </div>
