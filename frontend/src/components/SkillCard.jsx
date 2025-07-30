@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card } from './ui/card';
 import { difficultyLevels, formatTime } from '../data/mock';
 
-const SkillCard = ({ skill, category, onLogTime, onEditSkill, onDeleteSkill }) => {
+const SkillCard = ({ skill, category, onLogTime, onEditSkill, onDeleteSkill, onShowStats }) => {
   const [isHovered, setIsHovered] = useState(false);
   
   const getDifficultyInfo = () => {
