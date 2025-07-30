@@ -281,18 +281,11 @@ const MainApp = () => {
     setIsSettingsModalOpen(true);
   };
 
-  const handleSettingsSave = (settingsData) => {
-    // Update user settings
-    if (settingsData.username !== user.username || settingsData.avatar !== user.avatar) {
-      updateUser({
-        username: settingsData.username,
-        avatar: settingsData.avatar
-      });
-    }
-    
+  const handleShowSkillStats = (skill) => {
+    const level = Math.floor((skill.total_time_minutes || 0) / 120) + 1;
     setToast({
-      message: 'Settings saved successfully!',
-      type: 'success'
+      message: `📊 ${skill.name}: ${formatTime(skill.total_time_minutes || 0)} logged, ${skill.total_xp || 0} XP earned, Level ${level}`,
+      type: 'info'
     });
   };
 
