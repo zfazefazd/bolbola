@@ -89,7 +89,7 @@ const Leaderboard = ({ leaderboard, currentUser }) => {
                           className="text-sm font-bold font-[Montserrat] uppercase"
                           style={{ color: player.current_rank?.color || '#8B4513' }}
                         >
-                          {player.current_rank?.tier || 'Iron'} {player.current_rank?.division || 'IV'}
+                          {player.current_rank?.tier || 'Iron'}{player.current_rank?.division ? ` ${player.current_rank.division}` : ''}
                         </span>
                         <span className="text-xs text-gray-400">
                           • {(player.total_xp || 0).toLocaleString()} XP
