@@ -199,13 +199,23 @@ const CategoryTabs = ({ categories, activeCategory, onCategoryChange, skills, on
                 <label className="block text-sm font-semibold text-[#00BFA6] mb-2">
                   Icon
                 </label>
-                <input
-                  type="text"
-                  value={newCategory.icon}
-                  onChange={(e) => setNewCategory(prev => ({ ...prev, icon: e.target.value }))}
-                  className="w-full py-2 px-3 bg-[#1E1E2F]/50 border border-[#00BFA6]/20 rounded-lg text-white text-center focus:outline-none focus:border-[#00BFA6]/60 focus:ring-2 focus:ring-[#00BFA6]/20"
-                  placeholder="📂"
-                />
+                <div className="flex space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowIconPicker(true)}
+                    className="w-10 h-10 bg-[#1E1E2F]/50 border border-[#00BFA6]/20 rounded-lg text-xl flex items-center justify-center hover:border-[#00BFA6]/40 transition-all duration-300"
+                  >
+                    {newCategory.icon}
+                  </button>
+                  <input
+                    type="text"
+                    value={newCategory.icon}
+                    onChange={(e) => setNewCategory(prev => ({ ...prev, icon: e.target.value }))}
+                    className="flex-1 py-2 px-3 bg-[#1E1E2F]/50 border border-[#00BFA6]/20 rounded-lg text-white text-center focus:outline-none focus:border-[#00BFA6]/60 focus:ring-2 focus:ring-[#00BFA6]/20"
+                    placeholder="📂"
+                  />
+                </div>
+                <p className="text-xs text-gray-400 mt-1">Click icon to browse 50+ options</p>
               </div>
               
               <div className="flex-1">
