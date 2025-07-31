@@ -19,80 +19,80 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
   const progress = getRankProgress(totalXP, rank);
   const nextRank = getNextRank(rank);
   
-  // Professional gaming rank icons - using actual gaming rank symbols
+  // Rank designs inspired by the uploaded League of Legends rank armors
   const getRankIllustration = (tierName, division) => {
     const tier = tierName?.toLowerCase() || 'iron';
     
     switch (tier) {
       case 'iron':
         return {
-          background: 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%)',
-          illustration: '🛡️',
-          particles: ['⚙️', '🔩', '🛠️'],
-          glow: 'shadow-[#8B4513]/20'
+          background: 'linear-gradient(135deg, #4A4A4A 0%, #6A6A6A 50%, #4A4A4A 100%)',
+          illustration: '⚔️', // Sword representing basic iron armor
+          particles: ['⚔️', '🛡️', '⚙️'],
+          glow: 'shadow-[#4A4A4A]/30'
         };
       case 'bronze':
         return {
-          background: 'linear-gradient(135deg, #CD7F32 0%, #DAA520 50%, #CD7F32 100%)',
-          illustration: '🥉',
-          particles: ['🥉', '⭐', '✨'],
-          glow: 'shadow-[#CD7F32]/30'
+          background: 'linear-gradient(135deg, #8B4513 0%, #CD853F 50%, #8B4513 100%)',
+          illustration: '🛡️', // Shield representing bronze armor
+          particles: ['🛡️', '⚔️', '✨'],
+          glow: 'shadow-[#8B4513]/40'
         };
       case 'silver':
         return {
-          background: 'linear-gradient(135deg, #C0C0C0 0%, #E8E8E8 50%, #C0C0C0 100%)',
-          illustration: '🥈',
-          particles: ['🥈', '💫', '✨'],
-          glow: 'shadow-[#C0C0C0]/40'
+          background: 'linear-gradient(135deg, #C0C0C0 0%, #E5E5E5 50%, #C0C0C0 100%)',
+          illustration: '⚡', // Lightning representing silver's agility
+          particles: ['⚡', '🛡️', '✨'],
+          glow: 'shadow-[#C0C0C0]/50'
         };
       case 'gold':
         return {
-          background: 'linear-gradient(135deg, #FFD700 0%, #FFF700 50%, #FFD700 100%)',
-          illustration: '🥇',
-          particles: ['🥇', '🏆', '👑'],
-          glow: 'shadow-[#FFD700]/50'
+          background: 'linear-gradient(135deg, #DAA520 0%, #FFD700 50%, #DAA520 100%)',
+          illustration: '👑', // Crown representing gold's nobility
+          particles: ['👑', '✨', '🏆'],
+          glow: 'shadow-[#DAA520]/60'
         };
       case 'platinum':
         return {
-          background: 'linear-gradient(135deg, #00CED1 0%, #40E0D0 50%, #00CED1 100%)',
-          illustration: '💎',
+          background: 'linear-gradient(135deg, #40E0D0 0%, #48D1CC 50%, #40E0D0 100%)',
+          illustration: '💎', // Diamond representing platinum's precious nature
           particles: ['💎', '✨', '🌟'],
-          glow: 'shadow-[#00CED1]/60'
+          glow: 'shadow-[#40E0D0]/70'
         };
       case 'diamond':
         return {
-          background: 'linear-gradient(135deg, #1E90FF 0%, #4169E1 50%, #1E90FF 100%)',
-          illustration: '💍',
-          particles: ['💍', '💎', '⭐'],
-          glow: 'shadow-[#1E90FF]/70'
+          background: 'linear-gradient(135deg, #87CEEB 0%, #4169E1 50%, #87CEEB 100%)',
+          illustration: '🔷', // Blue diamond representing diamond rank
+          particles: ['🔷', '💎', '⭐'],
+          glow: 'shadow-[#4169E1]/80'
         };
       case 'master':
         return {
-          background: 'linear-gradient(135deg, #9370DB 0%, #BA55D3 50%, #9370DB 100%)',
-          illustration: '🔮',
+          background: 'linear-gradient(135deg, #9932CC 0%, #8A2BE2 50%, #9932CC 100%)',
+          illustration: '🔮', // Crystal orb for master's mystical power
           particles: ['🔮', '✨', '🌟'],
-          glow: 'shadow-[#9370DB]/80'
+          glow: 'shadow-[#9932CC]/90'
         };
       case 'grandmaster':
         return {
-          background: 'linear-gradient(135deg, #FF1493 0%, #FF69B4 50%, #FF1493 100%)',
-          illustration: '👑',
-          particles: ['👑', '⚡', '🌟'],
-          glow: 'shadow-[#FF1493]/90'
+          background: 'linear-gradient(135deg, #DC143C 0%, #B22222 50%, #DC143C 100%)',
+          illustration: '🏆', // Trophy representing grandmaster achievement
+          particles: ['🏆', '👑', '⚡'],
+          glow: 'shadow-[#DC143C]/95'
         };
       case 'challenger':
         return {
           background: 'linear-gradient(135deg, #FF6347 0%, #FF4500 30%, #FFD700 70%, #FF6347 100%)',
-          illustration: '🌟',
+          illustration: '🌟', // Radiant star for the ultimate rank
           particles: ['🌟', '⚡', '🔥'],
           glow: 'shadow-[#FF6347]/100 shadow-2xl'
         };
       default:
         return {
-          background: 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%)',
-          illustration: '🛡️',
-          particles: ['⚙️'],
-          glow: 'shadow-[#8B4513]/20'
+          background: 'linear-gradient(135deg, #4A4A4A 0%, #6A6A6A 50%, #4A4A4A 100%)',
+          illustration: '⚔️',
+          particles: ['⚔️'],
+          glow: 'shadow-[#4A4A4A]/30'
         };
     }
   };
