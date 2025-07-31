@@ -166,7 +166,7 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
             {nextRank ? (
               <div className="text-xs text-gray-400">
                 <span className="text-[#00BFA6]">{(progress?.xpNeeded || 0).toLocaleString()} XP</span>
-                {' '}to {nextRank.tier} {nextRank.division}
+                {' '}to {nextRank.tier}{nextRank.division ? ` ${nextRank.division}` : ''}
               </div>
             ) : (
               <div className="text-xs text-[#FFD700]">
