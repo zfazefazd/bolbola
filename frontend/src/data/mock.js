@@ -484,7 +484,7 @@ export function getRankProgress(totalXP, currentRank) {
   
   return {
     percentage: Math.round(percentage),
-    xpNeeded: nextRank.minXP - totalXP,
+    xpNeeded: Math.max(0, nextRank.minXP - totalXP), // Ensure never negative
     xpProgress: xpInCurrentRank,
     xpTotal: xpNeededForNext
   };
