@@ -46,11 +46,27 @@ const TimeLogModal = ({ isOpen, onClose, skill, onConfirm }) => {
 
   const handleCustomTimeChange = (field, value) => {
     setSelectedPreset(null);
+    // Fix: Convert value to number and ensure it's valid
+    const numValue = parseInt(value, 10);
+    const finalValue = isNaN(numValue) ? 0 : Math.max(0, numValue);
+    
+    // Set reasonable limits
+    if (field === 'hours' && finalValue > 23) return;
+    if (field === 'minutes' && finalValue > 59) return;
+    
     setTimeInput(prev => ({
       ...prev,
-      [field]: Math.max(0, parseInt(value) || 0)
+      [field]: finalValue
     }));
   };
+
+  // Reset form when modal opens
+  React.useEffect(() => {
+    if (isOpen) {
+      setTimeInput({ hours: 0, minutes: 15 });
+      setSelectedPreset(null);
+    }
+  }, [isOpen]);
 
   if (!skill) return null;
 
@@ -97,10 +113,10 @@ const TimeLogModal = ({ isOpen, onClose, skill, onConfirm }) => {
 
             <div className="flex items-center justify-center space-x-4 text-sm">
               <span className="text-[#00BFA6] font-mono">
-                Total: {formatTime(skill.totalTimeMinutes || 0)}
+                Total: {formatTime(skill.total_time_minutes || 0)}
               </span>
               <span className="text-[#FFD54F] font-mono">
-                {skill.totalXP || 0} XP
+                {skill.total_xp || 0} XP
               </span>
               {skill.streak > 0 && (
                 <span className="text-[#FF6B6B] font-mono">🔥 {skill.streak} days</span>
@@ -139,27 +155,32 @@ const TimeLogModal = ({ isOpen, onClose, skill, onConfirm }) => {
               <div className="flex items-center justify-center space-x-4">
                 <div className="flex items-center space-x-2">
                   <input
-                    type="number"
-                    min="0"
-                    max="23"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     value={timeInput.hours}
                     onChange={(e) => handleCustomTimeChange('hours', e.target.value)}
                     className="w-16 py-2 px-3 bg-[#1E1E2F]/50 border border-[#00BFA6]/20 rounded-lg text-white text-center focus:outline-none focus:border-[#00BFA6]/60 focus:ring-2 focus:ring-[#00BFA6]/20"
+                    placeholder="0"
                   />
                   <span className="text-gray-300 text-sm">hours</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <input
-                    type="number"
-                    min="0"
-                    max="59"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     value={timeInput.minutes}
                     onChange={(e) => handleCustomTimeChange('minutes', e.target.value)}
                     className="w-16 py-2 px-3 bg-[#1E1E2F]/50 border border-[#00BFA6]/20 rounded-lg text-white text-center focus:outline-none focus:border-[#00BFA6]/60 focus:ring-2 focus:ring-[#00BFA6]/20"
+                    placeholder="0"
                   />
                   <span className="text-gray-300 text-sm">minutes</span>
                 </div>
               </div>
+              <p className="text-xs text-gray-400 mt-2 text-center">
+                Tip: You can type numbers directly into the fields
+              </p>
             </div>
 
             {/* XP Preview */}
