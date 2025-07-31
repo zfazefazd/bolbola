@@ -10,6 +10,13 @@ const CategoryTabs = ({ categories, activeCategory, onCategoryChange, skills, on
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showIconPicker, setShowIconPicker] = useState(false);
+  const [newCategory, setNewCategory] = useState({
+    name: '',
+    icon: '📂',
+    color: '#00BFA6',
+    description: ''
+  });
 
   const getCategoryStats = (categoryId) => {
     const categorySkills = skills.filter(skill => skill.category_id === categoryId);
