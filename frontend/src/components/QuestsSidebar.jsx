@@ -41,9 +41,15 @@ const QuestsSidebar = ({ onClaimReward, isCollapsed, onToggle }) => {
     if (claimedQuests.has(questId)) return;
     
     try {
-      await questsAPI.claimReward(questId);
+      const response = await questsAPI.claimReward(questId);
       setClaimedQuests(prev => new Set([...prev, questId]));
-      onClaimReward(`${questName} completed! +${xpReward} XP`);
+      
+      // Pass the response data that includes user_data for live updates
+      const message = response.data.message || `${questName} completed! +${xpReward} XP`;
+      const userData = response.data.user_data;
+      
+      // Call the parent with more context
+      onClaimReward(message, userData);
       
       // Refresh quests after claiming
       setTimeout(loadQuests, 1000);
