@@ -250,6 +250,14 @@ const CategoryTabs = ({ categories, activeCategory, onCategoryChange, skills, on
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Icon Picker Modal */}
+      <IconPicker
+        isOpen={showIconPicker}
+        onClose={() => setShowIconPicker(false)}
+        onSelectIcon={(icon) => setNewCategory(prev => ({ ...prev, icon }))}
+        currentIcon={newCategory.icon}
+      />
     </>
   );
 };
