@@ -19,33 +19,37 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
   const progress = getRankProgress(totalXP, rank);
   const nextRank = getNextRank(rank);
   
-  // Use actual rank armor images from the uploaded League of Legends rank image
+  // Use actual rank armor images from the uploaded PDF
   const getRankIllustration = (tierName, division) => {
     const tier = tierName?.toLowerCase() || 'iron';
     
-    // Map each rank to its position in the uploaded image (3x3 grid)
-    const rankPositions = {
-      'iron': { x: 0, y: 0 }, // Top-left
-      'bronze': { x: 1, y: 0 }, // Top-center  
-      'silver': { x: 2, y: 0 }, // Top-right
-      'gold': { x: 3, y: 0 }, // Top-far-right
-      'platinum': { x: 4, y: 0 }, // Top-end
-      'diamond': { x: 0, y: 1 }, // Bottom-left
-      'master': { x: 1, y: 1 }, // Bottom-center
-      'grandmaster': { x: 2, y: 1 }, // Bottom-center-right
-      'challenger': { x: 3, y: 1 } // Bottom-right
+    // Map each rank to its individual image file
+    const rankImageMap = {
+      'iron': '/rank-icons/iron.jpg',
+      'bronze': '/rank-icons/bronze.jpg',
+      'silver': '/rank-icons/silver.jpg',
+      'gold': '/rank-icons/gold.jpg',
+      'platinum': '/rank-icons/platinum.jpg',
+      'diamond': '/rank-icons/diamond.jpg',
+      'master': '/rank-icons/master.jpg',
+      'grandmaster': '/rank-icons/grandmaster.jpg',
+      'challenger': '/rank-icons/challenger.jpg'
     };
     
-    const position = rankPositions[tier] || rankPositions['iron'];
+    const imageUrl = rankImageMap[tier] || rankImageMap['iron'];
     
     return {
       background: 'transparent',
-      backgroundImage: 'url(/rank_icons.jpg)',
-      backgroundPosition: `-${position.x * 200}px -${position.y * 200}px`,
-      backgroundSize: '1000px 400px', // Adjust based on original image size
+      backgroundImage: `url(${imageUrl})`,
+      backgroundPosition: 'center',
+      backgroundSize: 'contain',
+      backgroundRepeat: 'no-repeat',
       illustration: '', // No emoji, using background image
-      particles: [],
-      glow: `shadow-lg`
+      particles: ['✨', '💫', '⭐'], // Add particles for higher ranks
+      glow: tier === 'challenger' ? 'shadow-2xl shadow-orange-500/30' : 
+            tier === 'grandmaster' ? 'shadow-2xl shadow-pink-500/30' :
+            tier === 'master' ? 'shadow-2xl shadow-purple-500/30' :
+            'shadow-lg'
     };
   };
 
