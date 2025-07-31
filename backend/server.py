@@ -90,6 +90,49 @@ async def get_current_user_profile(current_user=Depends(get_current_user)):
         use_predefined_categories=current_user.get("use_predefined_categories", True)
     )
 
+@api_router.post("/auth/reset-user-data", response_model=MessageResponse)
+async def reset_user_data(
+    current_user=Depends(get_current_user),
+    db=Depends(get_database)
+):
+    """Reset all user data including skills, time logs, achievements, etc."""
+    try:
+        user_id = current_user["_id"]
+        
+        # Delete all user-related data
+        await db.skills.delete_many({"user_id": user_id})
+        await db.categories.delete_many({"user_id": user_id})
+        await db.time_logs.delete_many({"user_id": user_id})
+        await db.user_achievements.delete_many({"user_id": user_id})
+        await db.user_quests.delete_many({"user_id": user_id})
+        
+        # Reset user stats
+        await db.users.update_one(
+            {"_id": user_id},
+            {
+                "$set": {
+                    "total_xp": 0,
+                    "total_time_minutes": 0,
+                    "current_rank": AuthService(db).get_rank_by_xp(0),
+                    "updated_at": datetime.utcnow()
+                }
+            }
+        )
+        
+        # Re-initialize default data for the user
+        from init_data import initialize_user_default_data
+        await initialize_user_default_data(db, user_id)
+        
+        logging.info(f"Reset all data for user {user_id}")
+        return MessageResponse(message="All user data has been reset successfully")
+        
+    except Exception as e:
+        logging.error(f"Failed to reset user data: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to reset user data"
+        )
+
 # User settings routes
 @api_router.get("/settings", response_model=UserSettings)
 async def get_user_settings(
@@ -191,7 +234,22 @@ async def log_time(
     db=Depends(get_database)
 ):
     time_log_service = TimeLogService(db)
-    return await time_log_service.log_time(current_user["_id"], time_log_data)
+    
+    # Log the time and get the updated skill and user data
+    time_log = await time_log_service.log_time(current_user["_id"], time_log_data)
+    
+    # Get updated user data to return current rank and XP
+    updated_user = await db.users.find_one({"_id": current_user["_id"]})
+    
+    # Add user data to the response for live updates
+    time_log_dict = time_log.dict() if hasattr(time_log, 'dict') else time_log
+    time_log_dict["user_data"] = {
+        "total_xp": updated_user["total_xp"],
+        "current_rank": updated_user["current_rank"],
+        "total_time_minutes": updated_user.get("total_time_minutes", 0)
+    }
+    
+    return time_log_dict
 
 @api_router.get("/time-logs", response_model=List[TimeLog])
 async def get_time_logs(
@@ -231,7 +289,7 @@ async def get_user_quests(
     quest_service = QuestService(db)
     return await quest_service.get_user_quests(current_user["_id"])
 
-@api_router.post("/quests/{quest_id}/claim", response_model=MessageResponse)
+@api_router.post("/quests/{quest_id}/claim", response_model=Dict)
 async def claim_quest_reward(
     quest_id: str,
     current_user=Depends(get_current_user),
@@ -244,7 +302,18 @@ async def claim_quest_reward(
             status_code=400, 
             detail="Quest not found, not completed, or already claimed"
         )
-    return MessageResponse(message="Quest reward claimed successfully!")
+    
+    # Get updated user data after claiming reward
+    updated_user = await db.users.find_one({"_id": current_user["_id"]})
+    
+    return {
+        "message": "Quest reward claimed successfully!",
+        "user_data": {
+            "total_xp": updated_user["total_xp"],
+            "current_rank": updated_user["current_rank"],
+            "total_time_minutes": updated_user.get("total_time_minutes", 0)
+        }
+    }
 
 # Stats routes
 @api_router.get("/stats/user", response_model=Dict)
