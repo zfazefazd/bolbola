@@ -162,20 +162,29 @@ const MainApp = () => {
       );
       setSkills(updatedSkills);
 
-      // Update user's total XP and rank
-      const newTotalXP = user.total_xp + response.data.xp_earned;
-      updateUser({
-        total_xp: newTotalXP,
-        // Note: The backend calculates the new rank, but for immediate UI update we'll refetch user data
-      });
+      // Update user's total XP and rank with real-time data from backend
+      if (response.data.user_data) {
+        updateUser({
+          total_xp: response.data.user_data.total_xp,
+          current_rank: response.data.user_data.current_rank,
+          total_time_minutes: response.data.user_data.total_time_minutes
+        });
+      } else {
+        // Fallback to old method if user_data not available
+        const newTotalXP = user.total_xp + response.data.xp_earned;
+        updateUser({ total_xp: newTotalXP });
+      }
 
-      // Refresh leaderboard and achievements
-      const [leaderboardRes, achievementsRes] = await Promise.all([
+      // Refresh leaderboard and achievements in background
+      Promise.all([
         leaderboardAPI.get(),
         achievementsAPI.getAll()
-      ]);
-      setLeaderboard(leaderboardRes.data.entries || []);
-      setAchievements(achievementsRes.data);
+      ]).then(([leaderboardRes, achievementsRes]) => {
+        setLeaderboard(leaderboardRes.data.entries || []);
+        setAchievements(achievementsRes.data);
+      }).catch(error => {
+        console.error('Failed to refresh secondary data:', error);
+      });
 
       setToast({
         message: `+${response.data.xp_earned} XP earned! ${formatTime(timeMinutes)} logged for ${skill.name}`,
