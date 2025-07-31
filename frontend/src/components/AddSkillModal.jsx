@@ -14,7 +14,6 @@ const AddSkillModal = ({ isOpen, onClose, categories, onConfirm }) => {
     description: ''
   });
   
-  const [showPredefined, setShowPredefined] = useState(true);
   const [predefinedCategories, setPredefinedCategories] = useState([]);
   const [userSettings, setUserSettings] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -45,13 +44,11 @@ const AddSkillModal = ({ isOpen, onClose, categories, onConfirm }) => {
       
       setUserSettings(settingsRes.data);
       setPredefinedCategories(predefinedRes.data);
-      setShowPredefined(settingsRes.data.use_predefined_categories);
     } catch (error) {
       console.error('Failed to load data:', error);
       // Fallback to default values on error
       setUserSettings({ use_predefined_categories: true });
       setPredefinedCategories([]);
-      setShowPredefined(true);
     } finally {
       setLoading(false);
     }
@@ -75,8 +72,22 @@ const AddSkillModal = ({ isOpen, onClose, categories, onConfirm }) => {
     setSkillData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Fix the category selection logic
-  const availableCategories = showPredefined ? predefinedCategories : categories;
+  // Fix: Combine both predefined and custom categories for skill creation
+  // Users can always add skills to both, but settings controls if they can create new categories
+  const getAllAvailableCategories = () => {
+    const customCategories = categories || [];
+    const predefined = predefinedCategories || [];
+    
+    // Combine both arrays and remove duplicates by id
+    const combined = [...predefined, ...customCategories];
+    const uniqueCategories = combined.filter((category, index, self) => 
+      index === self.findIndex(c => c.id === category.id)
+    );
+    
+    return uniqueCategories;
+  };
+
+  const availableCategories = getAllAvailableCategories();
 
   return (
     <>
@@ -103,34 +114,15 @@ const AddSkillModal = ({ isOpen, onClose, categories, onConfirm }) => {
               />
             </div>
 
-            {/* Category Selection */}
+            {/* Category Selection - Fixed to show all categories */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="block text-sm font-semibold text-[#00BFA6]">
                   Category *
                 </label>
-                {userSettings && (
-                  <div className="flex items-center space-x-2">
-                    <span className="text-xs text-gray-400">
-                      {showPredefined ? 'Predefined' : 'Custom'}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowPredefined(!showPredefined);
-                        // Reset category selection when switching
-                        setSkillData(prev => ({ ...prev, category_id: '' }));
-                      }}
-                      className={`w-8 h-4 rounded-full transition-all duration-300 ${
-                        showPredefined ? 'bg-gradient-to-r from-[#00BFA6] to-[#2962FF]' : 'bg-gray-600'
-                      }`}
-                    >
-                      <div className={`w-3 h-3 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
-                        showPredefined ? 'translate-x-4' : 'translate-x-0.5'
-                      }`} />
-                    </button>
-                  </div>
-                )}
+                <div className="text-xs text-gray-400">
+                  {availableCategories.length} available
+                </div>
               </div>
               
               {loading ? (
@@ -139,7 +131,7 @@ const AddSkillModal = ({ isOpen, onClose, categories, onConfirm }) => {
                 </div>
               ) : availableCategories.length === 0 ? (
                 <div className="w-full py-2 px-3 bg-[#1E1E2F]/50 border border-red-500/20 rounded-lg text-red-400">
-                  ⚠️ No categories available. Please try refreshing or contact support.
+                  ⚠️ No categories available. Please create a category first.
                 </div>
               ) : (
                 <select
@@ -148,19 +140,32 @@ const AddSkillModal = ({ isOpen, onClose, categories, onConfirm }) => {
                   className="w-full py-2 px-3 bg-[#1E1E2F]/50 border border-[#00BFA6]/20 rounded-lg text-white focus:outline-none focus:border-[#00BFA6]/60 focus:ring-2 focus:ring-[#00BFA6]/20"
                 >
                   <option value="">Select a category</option>
-                  {availableCategories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.icon} {category.name}
-                    </option>
-                  ))}
+                  {/* Show predefined categories first */}
+                  {predefinedCategories.length > 0 && (
+                    <optgroup label="📚 Predefined Categories">
+                      {predefinedCategories.map((category) => (
+                        <option key={`predefined-${category.id}`} value={category.id}>
+                          {category.icon} {category.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  {/* Then show custom categories */}
+                  {categories && categories.length > 0 && (
+                    <optgroup label="🎨 Custom Categories">
+                      {categories.map((category) => (
+                        <option key={`custom-${category.id}`} value={category.id}>
+                          {category.icon} {category.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
                 </select>
               )}
               
-              {showPredefined && (
-                <p className="text-xs text-gray-400 mt-1">
-                  💡 Using predefined categories. Toggle off to use your custom categories.
-                </p>
-              )}
+              <p className="text-xs text-gray-400 mt-1">
+                💡 You can add skills to both predefined and custom categories
+              </p>
             </div>
 
             {/* Description */}
@@ -198,7 +203,7 @@ const AddSkillModal = ({ isOpen, onClose, categories, onConfirm }) => {
                     placeholder="🎯"
                   />
                 </div>
-                <p className="text-xs text-gray-400 mt-1">Click the icon to browse options</p>
+                <p className="text-xs text-gray-400 mt-1">Click icon to browse 50+ options</p>
               </div>
               
               {/* Difficulty */}

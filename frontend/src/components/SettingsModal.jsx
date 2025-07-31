@@ -41,27 +41,30 @@ const SettingsModal = ({ isOpen, onClose, user, onSave }) => {
     try {
       setIsResetting(true);
       
-      // Call backend API to reset user data
+      // Fix: Use the proper API service instead of direct fetch
+      const token = localStorage.getItem('auth_token');
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/reset-user-data`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
 
       if (response.ok) {
-        alert('✅ All data has been reset successfully! You will be logged out.');
-        // Clear local storage and reload
+        const result = await response.json();
+        alert('✅ All data has been reset successfully! The page will refresh.');
+        
+        // Clear local storage and reload to refresh the app state
         localStorage.clear();
         window.location.reload();
       } else {
-        const error = await response.json();
-        alert(`❌ Failed to reset data: ${error.detail || 'Unknown error'}`);
+        const errorData = await response.json();
+        alert(`❌ Failed to reset data: ${errorData.detail || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Reset error:', error);
-      alert('❌ Failed to reset data. Please try again.');
+      alert('❌ Failed to reset data. Please check your connection and try again.');
     } finally {
       setIsResetting(false);
       setShowResetConfirm(false);
@@ -141,7 +144,7 @@ const SettingsModal = ({ isOpen, onClose, user, onSave }) => {
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-white">Use Predefined Categories</span>
-                    <p className="text-xs text-gray-400">Use system categories or create your own</p>
+                    <p className="text-xs text-gray-400">Controls ability to create new custom categories</p>
                   </div>
                   <button
                     onClick={() => handleInputChange('usePredefinedCategories', !settings.usePredefinedCategories)}
@@ -287,7 +290,7 @@ const SettingsModal = ({ isOpen, onClose, user, onSave }) => {
                       className="w-full mt-2 border-gray-500 text-gray-400 hover:bg-gray-500/10"
                       onClick={() => setShowResetConfirm(false)}
                     >
-                      Cancel
+                      Cancel Reset
                     </Button>
                   </div>
                 )}
