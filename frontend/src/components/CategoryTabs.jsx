@@ -40,9 +40,17 @@ const CategoryTabs = ({ categories, activeCategory, onCategoryChange, skills, on
     };
   };
 
-  const handleAddCategory = (categoryData) => {
-    onAddCategory(categoryData);
-    setIsAddModalOpen(false);
+  const handleAddCategory = () => {
+    if (newCategory.name.trim()) {
+      onAddCategory(newCategory);
+      setNewCategory({
+        name: '',
+        icon: '📂',
+        color: '#00BFA6',
+        description: ''
+      });
+      setIsAddModalOpen(false);
+    }
   };
 
   const handleEditCategory = (category) => {
