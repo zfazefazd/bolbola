@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import AuthPage from './components/auth/AuthPage';
+import AuthPage from './components/auth/AuthPage.jsx';
 import Header from './components/Header';
 import CategoryTabs from './components/CategoryTabs';
 import SkillCard from './components/SkillCard';
