@@ -23,6 +23,7 @@ import {
   questsAPI, 
   statsAPI,
   settingsAPI,
+  authAPI,
   handleApiError 
 } from './services/api';
 
