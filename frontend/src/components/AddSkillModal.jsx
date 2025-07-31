@@ -131,26 +131,11 @@ const AddSkillModal = ({ isOpen, onClose, categories, onConfirm }) => {
                   className="w-full py-2 px-3 bg-[#1E1E2F]/50 border border-[#00BFA6]/20 rounded-lg text-white focus:outline-none focus:border-[#00BFA6]/60 focus:ring-2 focus:ring-[#00BFA6]/20"
                 >
                   <option value="">Select a category</option>
-                  {/* Show predefined categories first */}
-                  {predefinedCategories.length > 0 && (
-                    <optgroup label="📚 Predefined Categories">
-                      {predefinedCategories.map((category) => (
-                        <option key={`predefined-${category.id}`} value={category.id}>
-                          {category.icon} {category.name}
-                        </option>
-                      ))}
-                    </optgroup>
-                  )}
-                  {/* Then show custom categories */}
-                  {categories && categories.length > 0 && (
-                    <optgroup label="🎨 Custom Categories">
-                      {categories.map((category) => (
-                        <option key={`custom-${category.id}`} value={category.id}>
-                          {category.icon} {category.name}
-                        </option>
-                      ))}
-                    </optgroup>
-                  )}
+                  {availableCategories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.icon} {category.name}
+                    </option>
+                  ))}
                 </select>
               )}
               
