@@ -154,7 +154,7 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
           className={`font-bold font-[Montserrat] uppercase tracking-wide ${textSize}`}
           style={{ color: rank?.color || '#8B4513' }}
         >
-          {rank?.tier || 'Iron'} {rank?.division || 'IV'}
+          {rank?.tier || 'Iron'}{rank?.division ? ` ${rank.division}` : ''}
         </h3>
         
         {showProgress && (
