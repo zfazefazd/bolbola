@@ -6,7 +6,8 @@ import { formatTime } from '../data/mock';
 
 const CategoryTabs = ({ categories, activeCategory, onCategoryChange, skills, onAddCategory, onEditCategory }) => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newCategory, setNewCategory] = useState({ name: '', icon: '📂', color: '#00BFA6', description: '' });
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const getCategoryStats = (categoryId) => {
     const categorySkills = skills.filter(skill => skill.category_id === categoryId);
