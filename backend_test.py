@@ -15,8 +15,8 @@ import os
 from datetime import datetime
 from typing import Dict, Any, Optional
 
-# Get backend URL from environment - use localhost for testing
-BACKEND_URL = "http://localhost:8001"
+# Get backend URL from environment - use public URL for testing
+BACKEND_URL = "https://bolbola.onrender.com"
 API_BASE_URL = f"{BACKEND_URL}/api"
 
 class GalacticQuestTester:
