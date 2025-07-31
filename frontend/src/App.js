@@ -338,16 +338,35 @@ const MainApp = () => {
     setIsSettingsModalOpen(true);
   };
 
-  const handleClaimReward = (message) => {
+  const handleClaimReward = async (message) => {
     setToast({
       message: `🎉 ${message}`,
       type: 'success'
     });
     
-    // Refresh user data after claiming reward
-    setTimeout(() => {
-      loadAllData();
-    }, 1000);
+    // Refresh user data immediately by fetching updated profile
+    try {
+      const userRes = await authAPI.getProfile();
+      updateUser({
+        total_xp: userRes.data.total_xp,
+        current_rank: userRes.data.current_rank,
+        total_time_minutes: userRes.data.total_time_minutes
+      });
+      
+      // Also refresh quests and achievements
+      const [achievementsRes, questsRes] = await Promise.all([
+        achievementsAPI.getAll(),
+        questsAPI.getAll()
+      ]);
+      setAchievements(achievementsRes.data);
+      // Update quests in QuestsSidebar component (it will handle its own state)
+    } catch (error) {
+      console.error('Failed to refresh user data after quest claim:', error);
+      // Fallback to full reload after a delay
+      setTimeout(() => {
+        loadAllData();
+      }, 1000);
+    }
   };
 
   const formatTime = (minutes) => {
