@@ -31,19 +31,20 @@ const CategoryTabs = ({ categories, activeCategory, onCategoryChange, skills, on
     };
   };
 
-  const handleAddCategory = () => {
-    if (newCategory.name.trim()) {
-      const categoryData = {
-        id: newCategory.name.toLowerCase().replace(/\s+/g, '-'),
-        name: newCategory.name,
-        icon: newCategory.icon,
-        color: newCategory.color,
-        description: newCategory.description
-      };
-      onAddCategory(categoryData);
-      setNewCategory({ name: '', icon: '📂', color: '#00BFA6', description: '' });
-      setIsAddModalOpen(false);
-    }
+  const handleAddCategory = (categoryData) => {
+    onAddCategory(categoryData);
+    setIsAddModalOpen(false);
+  };
+
+  const handleEditCategory = (category) => {
+    setSelectedCategory(category);
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateCategory = (categoryData) => {
+    onEditCategory(selectedCategory, categoryData);
+    setSelectedCategory(null);
+    setIsEditModalOpen(false);
   };
 
   return (
