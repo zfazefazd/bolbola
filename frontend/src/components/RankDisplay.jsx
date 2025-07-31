@@ -78,12 +78,20 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
         
         <div 
           className={`${sizeClass} rounded-full p-1 ${rankArt.glow} hover:scale-110 transition-all duration-300`}
-          style={{ background: rankArt.background }}
+          style={{ 
+            background: rankArt.background,
+            backgroundImage: rankArt.backgroundImage,
+            backgroundPosition: rankArt.backgroundPosition,
+            backgroundSize: rankArt.backgroundSize,
+            backgroundRepeat: 'no-repeat'
+          }}
         >
-          <div className="w-full h-full rounded-full bg-[#1E1E2F]/20 backdrop-blur-sm flex items-center justify-center">
-            <div className={`${textSize} animate-pulse`}>
-              {rankArt.illustration}
-            </div>
+          <div className="w-full h-full rounded-full flex items-center justify-center">
+            {rankArt.illustration && (
+              <div className={`${textSize} animate-pulse`}>
+                {rankArt.illustration}
+              </div>
+            )}
           </div>
         </div>
         
