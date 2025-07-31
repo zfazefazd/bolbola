@@ -19,82 +19,34 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
   const progress = getRankProgress(totalXP, rank);
   const nextRank = getNextRank(rank);
   
-  // Rank designs inspired by the uploaded League of Legends rank armors
+  // Use actual rank armor images from the uploaded League of Legends rank image
   const getRankIllustration = (tierName, division) => {
     const tier = tierName?.toLowerCase() || 'iron';
     
-    switch (tier) {
-      case 'iron':
-        return {
-          background: 'linear-gradient(135deg, #4A4A4A 0%, #6A6A6A 50%, #4A4A4A 100%)',
-          illustration: '⚔️', // Sword representing basic iron armor
-          particles: ['⚔️', '🛡️', '⚙️'],
-          glow: 'shadow-[#4A4A4A]/30'
-        };
-      case 'bronze':
-        return {
-          background: 'linear-gradient(135deg, #8B4513 0%, #CD853F 50%, #8B4513 100%)',
-          illustration: '🛡️', // Shield representing bronze armor
-          particles: ['🛡️', '⚔️', '✨'],
-          glow: 'shadow-[#8B4513]/40'
-        };
-      case 'silver':
-        return {
-          background: 'linear-gradient(135deg, #C0C0C0 0%, #E5E5E5 50%, #C0C0C0 100%)',
-          illustration: '⚡', // Lightning representing silver's agility
-          particles: ['⚡', '🛡️', '✨'],
-          glow: 'shadow-[#C0C0C0]/50'
-        };
-      case 'gold':
-        return {
-          background: 'linear-gradient(135deg, #DAA520 0%, #FFD700 50%, #DAA520 100%)',
-          illustration: '👑', // Crown representing gold's nobility
-          particles: ['👑', '✨', '🏆'],
-          glow: 'shadow-[#DAA520]/60'
-        };
-      case 'platinum':
-        return {
-          background: 'linear-gradient(135deg, #40E0D0 0%, #48D1CC 50%, #40E0D0 100%)',
-          illustration: '💎', // Diamond representing platinum's precious nature
-          particles: ['💎', '✨', '🌟'],
-          glow: 'shadow-[#40E0D0]/70'
-        };
-      case 'diamond':
-        return {
-          background: 'linear-gradient(135deg, #87CEEB 0%, #4169E1 50%, #87CEEB 100%)',
-          illustration: '🔷', // Blue diamond representing diamond rank
-          particles: ['🔷', '💎', '⭐'],
-          glow: 'shadow-[#4169E1]/80'
-        };
-      case 'master':
-        return {
-          background: 'linear-gradient(135deg, #9932CC 0%, #8A2BE2 50%, #9932CC 100%)',
-          illustration: '🔮', // Crystal orb for master's mystical power
-          particles: ['🔮', '✨', '🌟'],
-          glow: 'shadow-[#9932CC]/90'
-        };
-      case 'grandmaster':
-        return {
-          background: 'linear-gradient(135deg, #DC143C 0%, #B22222 50%, #DC143C 100%)',
-          illustration: '🏆', // Trophy representing grandmaster achievement
-          particles: ['🏆', '👑', '⚡'],
-          glow: 'shadow-[#DC143C]/95'
-        };
-      case 'challenger':
-        return {
-          background: 'linear-gradient(135deg, #FF6347 0%, #FF4500 30%, #FFD700 70%, #FF6347 100%)',
-          illustration: '🌟', // Radiant star for the ultimate rank
-          particles: ['🌟', '⚡', '🔥'],
-          glow: 'shadow-[#FF6347]/100 shadow-2xl'
-        };
-      default:
-        return {
-          background: 'linear-gradient(135deg, #4A4A4A 0%, #6A6A6A 50%, #4A4A4A 100%)',
-          illustration: '⚔️',
-          particles: ['⚔️'],
-          glow: 'shadow-[#4A4A4A]/30'
-        };
-    }
+    // Map each rank to its position in the uploaded image (3x3 grid)
+    const rankPositions = {
+      'iron': { x: 0, y: 0 }, // Top-left
+      'bronze': { x: 1, y: 0 }, // Top-center  
+      'silver': { x: 2, y: 0 }, // Top-right
+      'gold': { x: 3, y: 0 }, // Top-far-right
+      'platinum': { x: 4, y: 0 }, // Top-end
+      'diamond': { x: 0, y: 1 }, // Bottom-left
+      'master': { x: 1, y: 1 }, // Bottom-center
+      'grandmaster': { x: 2, y: 1 }, // Bottom-center-right
+      'challenger': { x: 3, y: 1 } // Bottom-right
+    };
+    
+    const position = rankPositions[tier] || rankPositions['iron'];
+    
+    return {
+      background: 'transparent',
+      backgroundImage: 'url(/rank_icons.jpg)',
+      backgroundPosition: `-${position.x * 200}px -${position.y * 200}px`,
+      backgroundSize: '1000px 400px', // Adjust based on original image size
+      illustration: '', // No emoji, using background image
+      particles: [],
+      glow: `shadow-lg`
+    };
   };
 
   const rankArt = getRankIllustration(rank?.tier, rank?.division);
