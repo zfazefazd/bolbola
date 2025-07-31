@@ -354,16 +354,18 @@ const MainApp = () => {
         total_time_minutes: userRes.data.total_time_minutes
       });
       
-      // Also refresh quests and achievements
-      const [achievementsRes, questsRes] = await Promise.all([
+      // Also refresh achievements and leaderboard for live updates
+      const [achievementsRes, leaderboardRes] = await Promise.all([
         achievementsAPI.getAll(),
-        questsAPI.getAll()
+        leaderboardAPI.get()
       ]);
       setAchievements(achievementsRes.data);
-      // Update quests in QuestsSidebar component (it will handle its own state)
+      setLeaderboard(leaderboardRes.data.entries || []);
+      
+      // Note: QuestsSidebar handles its own quest state updates
     } catch (error) {
       console.error('Failed to refresh user data after quest claim:', error);
-      // Fallback to full reload after a delay
+      // Fallback to full reload after a delay if API calls fail
       setTimeout(() => {
         loadAllData();
       }, 1000);
