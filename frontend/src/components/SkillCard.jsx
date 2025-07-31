@@ -30,11 +30,24 @@ const SkillCard = ({ skill, category, onLogTime, onEditSkill, onDeleteSkill, onS
     };
   };
 
+  // Fix: Provide fallback for category if undefined
+  const getCategoryInfo = () => {
+    if (!category) {
+      return {
+        color: '#00BFA6', // Default color
+        name: 'Unknown Category',
+        icon: '📂'
+      };
+    }
+    return category;
+  };
+
   const difficultyInfo = getDifficultyInfo();
   const level = getTimeBasedLevel();
   const progress = getProgressToNextLevel();
   const isNearLevelUp = progress.percentage > 80;
   const lastActive = skill.last_logged_at ? new Date(skill.last_logged_at) : null;
+  const categoryInfo = getCategoryInfo();
 
   return (
     <Card 
@@ -47,7 +60,7 @@ const SkillCard = ({ skill, category, onLogTime, onEditSkill, onDeleteSkill, onS
         <div className="flex items-center space-x-3">
           <div 
             className="w-12 h-12 rounded-full flex items-center justify-center text-2xl"
-            style={{ backgroundColor: `${category.color}20`, border: `2px solid ${category.color}40` }}
+            style={{ backgroundColor: `${categoryInfo.color}20`, border: `2px solid ${categoryInfo.color}40` }}
           >
             {skill.icon}
           </div>

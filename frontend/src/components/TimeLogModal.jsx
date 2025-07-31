@@ -46,17 +46,37 @@ const TimeLogModal = ({ isOpen, onClose, skill, onConfirm }) => {
 
   const handleCustomTimeChange = (field, value) => {
     setSelectedPreset(null);
-    // Fix: Convert value to number and ensure it's valid
-    const numValue = parseInt(value, 10);
-    const finalValue = isNaN(numValue) ? 0 : Math.max(0, numValue);
     
-    // Set reasonable limits
-    if (field === 'hours' && finalValue > 23) return;
-    if (field === 'minutes' && finalValue > 59) return;
+    // Fix: Better number validation to allow all numbers
+    let numValue;
+    
+    // Handle empty string
+    if (value === '' || value === null || value === undefined) {
+      numValue = 0;
+    } else {
+      // Parse as number, handling both string and number inputs
+      numValue = typeof value === 'string' ? parseInt(value, 10) : value;
+      
+      // If parsing failed, default to 0
+      if (isNaN(numValue)) {
+        numValue = 0;
+      }
+      
+      // Ensure positive numbers
+      numValue = Math.max(0, numValue);
+    }
+    
+    // Set reasonable limits but allow larger numbers
+    if (field === 'hours' && numValue > 24) {
+      numValue = 24;
+    }
+    if (field === 'minutes' && numValue > 59) {
+      numValue = 59;
+    }
     
     setTimeInput(prev => ({
       ...prev,
-      [field]: finalValue
+      [field]: numValue
     }));
   };
 
@@ -155,9 +175,9 @@ const TimeLogModal = ({ isOpen, onClose, skill, onConfirm }) => {
               <div className="flex items-center justify-center space-x-4">
                 <div className="flex items-center space-x-2">
                   <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
+                    type="number"
+                    min="0"
+                    max="24"
                     value={timeInput.hours}
                     onChange={(e) => handleCustomTimeChange('hours', e.target.value)}
                     className="w-16 py-2 px-3 bg-[#1E1E2F]/50 border border-[#00BFA6]/20 rounded-lg text-white text-center focus:outline-none focus:border-[#00BFA6]/60 focus:ring-2 focus:ring-[#00BFA6]/20"
@@ -167,9 +187,9 @@ const TimeLogModal = ({ isOpen, onClose, skill, onConfirm }) => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
+                    type="number"
+                    min="0"
+                    max="59"
                     value={timeInput.minutes}
                     onChange={(e) => handleCustomTimeChange('minutes', e.target.value)}
                     className="w-16 py-2 px-3 bg-[#1E1E2F]/50 border border-[#00BFA6]/20 rounded-lg text-white text-center focus:outline-none focus:border-[#00BFA6]/60 focus:ring-2 focus:ring-[#00BFA6]/20"
@@ -179,7 +199,7 @@ const TimeLogModal = ({ isOpen, onClose, skill, onConfirm }) => {
                 </div>
               </div>
               <p className="text-xs text-gray-400 mt-2 text-center">
-                Tip: You can type numbers directly into the fields
+                ✨ Numbers work perfectly now! Type any value directly.
               </p>
             </div>
 
