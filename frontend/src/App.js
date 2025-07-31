@@ -339,22 +339,23 @@ const MainApp = () => {
     setIsSettingsModalOpen(true);
   };
 
-  const handleClaimReward = async (message) => {
+  const handleClaimReward = async (message, userData = null) => {
     setToast({
       message: `🎉 ${message}`,
       type: 'success'
     });
     
-    // Refresh user data immediately by fetching updated profile
-    try {
-      const userRes = await authAPI.getProfile();
+    // If we have user data from the quest claim response, use it directly for immediate updates
+    if (userData) {
       updateUser({
-        total_xp: userRes.data.total_xp,
-        current_rank: userRes.data.current_rank,
-        total_time_minutes: userRes.data.total_time_minutes
+        total_xp: userData.total_xp,
+        current_rank: userData.current_rank,
+        total_time_minutes: userData.total_time_minutes
       });
-      
-      // Also refresh achievements and leaderboard for live updates
+    }
+    
+    // Refresh achievements and leaderboard for live updates (async)
+    try {
       const [achievementsRes, leaderboardRes] = await Promise.all([
         achievementsAPI.getAll(),
         leaderboardAPI.get()
@@ -362,13 +363,23 @@ const MainApp = () => {
       setAchievements(achievementsRes.data);
       setLeaderboard(leaderboardRes.data.entries || []);
       
-      // Note: QuestsSidebar handles its own quest state updates
+      // If we didn't get user data directly, fetch it now
+      if (!userData) {
+        const userRes = await authAPI.getProfile();
+        updateUser({
+          total_xp: userRes.data.total_xp,
+          current_rank: userRes.data.current_rank,
+          total_time_minutes: userRes.data.total_time_minutes
+        });
+      }
     } catch (error) {
-      console.error('Failed to refresh user data after quest claim:', error);
-      // Fallback to full reload after a delay if API calls fail
-      setTimeout(() => {
-        loadAllData();
-      }, 1000);
+      console.error('Failed to refresh data after quest claim:', error);
+      // Fallback to full reload only if critical
+      if (!userData) {
+        setTimeout(() => {
+          loadAllData();
+        }, 1000);
+      }
     }
   };
 
