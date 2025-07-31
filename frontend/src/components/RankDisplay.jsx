@@ -19,7 +19,7 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
   const progress = getRankProgress(totalXP, rank);
   const nextRank = getNextRank(rank);
   
-  // Clean gaming rank illustrations - emoji-based system that works well
+  // Professional gaming rank icons - using actual gaming rank symbols
   const getRankIllustration = (tierName, division) => {
     const tier = tierName?.toLowerCase() || 'iron';
     
@@ -27,29 +27,29 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
       case 'iron':
         return {
           background: 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%)',
-          illustration: '⚙️',
-          particles: ['🔩', '⚙️', '🔧'],
+          illustration: '🛡️',
+          particles: ['⚙️', '🔩', '🛠️'],
           glow: 'shadow-[#8B4513]/20'
         };
       case 'bronze':
         return {
           background: 'linear-gradient(135deg, #CD7F32 0%, #DAA520 50%, #CD7F32 100%)',
           illustration: '🥉',
-          particles: ['✨', '🥉', '⭐'],
+          particles: ['🥉', '⭐', '✨'],
           glow: 'shadow-[#CD7F32]/30'
         };
       case 'silver':
         return {
           background: 'linear-gradient(135deg, #C0C0C0 0%, #E8E8E8 50%, #C0C0C0 100%)',
           illustration: '🥈',
-          particles: ['✨', '🥈', '💫'],
+          particles: ['🥈', '💫', '✨'],
           glow: 'shadow-[#C0C0C0]/40'
         };
       case 'gold':
         return {
           background: 'linear-gradient(135deg, #FFD700 0%, #FFF700 50%, #FFD700 100%)',
           illustration: '🥇',
-          particles: ['✨', '🏆', '👑'],
+          particles: ['🥇', '🏆', '👑'],
           glow: 'shadow-[#FFD700]/50'
         };
       case 'platinum':
@@ -90,8 +90,8 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
       default:
         return {
           background: 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%)',
-          illustration: '⚙️',
-          particles: ['🔩'],
+          illustration: '🛡️',
+          particles: ['⚙️'],
           glow: 'shadow-[#8B4513]/20'
         };
     }
