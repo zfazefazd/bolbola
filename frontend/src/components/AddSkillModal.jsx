@@ -140,7 +140,7 @@ const AddSkillModal = ({ isOpen, onClose, categories, onConfirm }) => {
               )}
               
               <p className="text-xs text-gray-400 mt-1">
-                💡 You can add skills to both predefined and custom categories
+                💡 Skills can be added to any available category
               </p>
             </div>
 
