@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import CategoryModal from './CategoryModal';
+import IconPicker from './IconPicker';
 import { formatTime } from '../data/mock';
 
 const CategoryTabs = ({ categories, activeCategory, onCategoryChange, skills, onAddCategory, onEditCategory }) => {
