@@ -72,19 +72,10 @@ const AddSkillModal = ({ isOpen, onClose, categories, onConfirm }) => {
     setSkillData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Fix: Combine both predefined and custom categories for skill creation
-  // Users can always add skills to both, but settings controls if they can create new categories
+  // Use only user categories since they already include predefined ones created during registration
+  // No need to combine predefined and custom categories as they're already combined in the user's categories
   const getAllAvailableCategories = () => {
-    const customCategories = categories || [];
-    const predefined = predefinedCategories || [];
-    
-    // Combine both arrays and remove duplicates by id
-    const combined = [...predefined, ...customCategories];
-    const uniqueCategories = combined.filter((category, index, self) => 
-      index === self.findIndex(c => c.id === category.id)
-    );
-    
-    return uniqueCategories;
+    return categories || [];
   };
 
   const availableCategories = getAllAvailableCategories();
