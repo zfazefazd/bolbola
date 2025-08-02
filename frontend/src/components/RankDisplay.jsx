@@ -44,6 +44,7 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
       backgroundPosition: 'center',
       backgroundSize: 'contain',
       backgroundRepeat: 'no-repeat',
+      imageUrl: imageUrl, // Add this so we can access it directly
       illustration: '', // No emoji, using background image
       particles: ['✨', '💫', '⭐'], // Add particles for higher ranks
       glow: tier === 'challenger' ? 'shadow-2xl shadow-orange-500/30' : 
