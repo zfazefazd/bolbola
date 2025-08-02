@@ -85,7 +85,7 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
           className={`${sizeClass} rounded-full p-1 ${rankArt.glow} hover:scale-110 transition-all duration-300 relative overflow-hidden`}
         >
           <img 
-            src={imageUrl}
+            src={rankArt.imageUrl}
             alt={`${rank?.tier || 'Iron'} rank`}
             className="w-full h-full object-contain rounded-full"
             onError={(e) => {
