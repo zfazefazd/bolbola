@@ -25,10 +25,10 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
     
     // Map each rank to its individual image file
     const rankImageMap = {
-      'iron': '/rank-icons/iron.jpg',
-      'bronze': '/rank-icons/bronze.jpg', 
-      'silver': '/rank-icons/silver.jpg',
-      'gold': '/rank-icons/gold.jpg',
+      'iron': '/rank-icons/iron.png',
+      'bronze': '/rank-icons/bronze.png', 
+      'silver': '/rank-icons/silver.png',
+      'gold': '/rank-icons/gold.png',
       'platinum': '/rank-icons/platinum.png',
       'diamond': '/rank-icons/diamond.png',
       'master': '/rank-icons/master.png',
