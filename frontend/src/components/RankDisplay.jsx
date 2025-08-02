@@ -81,16 +81,20 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
         )}
         
         <div 
-          className={`${sizeClass} rounded-full p-1 ${rankArt.glow} hover:scale-110 transition-all duration-300`}
-          style={{ 
-            background: rankArt.background,
-            backgroundImage: rankArt.backgroundImage,
-            backgroundPosition: rankArt.backgroundPosition,
-            backgroundSize: rankArt.backgroundSize,
-            backgroundRepeat: 'no-repeat'
-          }}
+          className={`${sizeClass} rounded-full p-1 ${rankArt.glow} hover:scale-110 transition-all duration-300 relative overflow-hidden`}
         >
-          <div className="w-full h-full rounded-full flex items-center justify-center">
+          <img 
+            src={rankImageMap[tier] || rankImageMap['iron']}
+            alt={`${rank?.tier || 'Iron'} rank`}
+            className="w-full h-full object-contain rounded-full"
+            onError={(e) => {
+              console.error('Failed to load rank image:', e.target.src);
+              e.target.style.display = 'none';
+            }}
+          />
+          
+          {/* Fallback if image fails to load */}
+          <div className="w-full h-full rounded-full flex items-center justify-center absolute inset-0" style={{ display: 'none' }}>
             {rankArt.illustration && (
               <div className={`${textSize} animate-pulse`}>
                 {rankArt.illustration}
