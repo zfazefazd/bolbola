@@ -84,12 +84,13 @@ const RankDisplay = ({ rank, totalXP, size = 'large', showProgress = true }) => 
           className={`${sizeClass} rounded-full p-1 ${rankArt.glow} hover:scale-110 transition-all duration-300 relative overflow-hidden`}
         >
           <img 
-            src={rankImageMap[tier] || rankImageMap['iron']}
+            src={imageUrl}
             alt={`${rank?.tier || 'Iron'} rank`}
             className="w-full h-full object-contain rounded-full"
             onError={(e) => {
               console.error('Failed to load rank image:', e.target.src);
               e.target.style.display = 'none';
+              e.target.nextElementSibling.style.display = 'flex';
             }}
           />
           
